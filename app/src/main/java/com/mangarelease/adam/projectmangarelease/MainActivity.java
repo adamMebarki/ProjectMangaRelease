@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button quitBut, releaseBut, libraryBut;
     private SqLiteHelper db;
     private FavoriteArray fav;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         libraryBut.setOnClickListener(this);
         db.getInstance(getApplicationContext());
         fav.getInstance();
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

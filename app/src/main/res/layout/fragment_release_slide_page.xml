@@ -11,9 +11,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:includeFontPadding="false"
         android:layout_marginBottom="30dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:textSize="30sp" />
 
     <WebView
@@ -30,8 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:maxLines = "4"
-        android:scrollbars = "vertical"/>
+        android:maxLines="4"
+        android:scrollbars="vertical" />
 
 
 </RelativeLayout>

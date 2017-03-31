@@ -46,7 +46,7 @@ public class ScreenSlidePageFragment extends Fragment {
         tv_desc.setMovementMethod(new ScrollingMovementMethod());
         tv_desc.setText(desc);
         tv_title.setText(title + "- " + num);
-
+        tv_title.setSelected(true);
         return rootView;
     }
 }

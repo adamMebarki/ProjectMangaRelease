@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
+import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.TomeClass;
 import com.mangarelease.adam.projectmangarelease.R;
@@ -35,7 +36,9 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
     private PagerAdapter mpa;
     private ArrayList<TomeClass> array;
     private Button retBut;
+    private SqLiteHelper db;
     private ImageButton favBut;
+    private PageListener pageListener;
 
     public ReleaseFragment(ArrayList<TomeClass> ar) {
         array = ar;
@@ -58,7 +61,7 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         mp.setAdapter(mpa);
         PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mpa);
         mp.setAdapter(wrappedAdapter);
-        PageListener pageListener = new PageListener(mp, array, favBut, getContext());
+        pageListener = new PageListener(mp, array, favBut, getContext());
         pageListener.onPageSelected(0);
         mp.addOnPageChangeListener(pageListener);
         return view;
@@ -72,7 +75,27 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         if (v.getId() == retBut.getId()) {
             getActivity().finish();
         }
+        // if manga already exist change the status of followed.
+        // if manga do not exist create new manga and add in the favorite liste
         if (v.getId() == favBut.getId()) {
+            Log.d("Page Current Tome/Page", "" + pageListener.getCurrentPage());
+            MangaClass mg = new MangaClass();
+            mg.setTitle(array.get(pageListener.getCurrentPage()).getTitleManga());
+            mg.setCategory(array.get(pageListener.getCurrentPage()).getCategory());
+            Log.d("Page Title and Category", mg.getTitle() +  mg.getCategory());
+            int id = (int) db.getInstance(getContext()).createManga(mg);
+            Log.d("Page New Manga_id or 0", "" + id);
+            // New manga created -> add to the favorite list
+            if (id != 0) {
+                   db.getInstance(getContext()).createFavorite(id,1);
+            } else { // manga already exist -> stop following or restart the following
+                Log.d("Page Manga_ID", "" + db.getInstance(getContext()).getManga_id(mg.getTitle()));
+                int tmp = db.getInstance(getContext()).getManga_id(mg.getTitle());
+                if (db.getInstance(getContext()).isFollow(tmp) == 0) // manga is not followed
+                    db.getInstance(getContext()).updateFavorite(tmp, 1);
+                else // manga is followed
+                    db.getInstance(getContext()).updateFavorite(tmp, 0);
+            }
             if ((Integer) v.getTag() == R.drawable.greystar) {
                 favBut.setBackgroundResource(R.drawable.yellowstar);
                 favBut.setTag(R.drawable.yellowstar);
@@ -84,11 +107,6 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    public ViewPager getViewPager() {
-        return mp;
-    }
-
-
     /**
      * Inner class Detect if the manga of the new release are favorite or note
      */
@@ -97,7 +115,6 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         private static ViewPager mypager;
         private static ArrayList<TomeClass> arrayView;
         private static ImageButton favb;
-        private static boolean isP = false;
         private SqLiteHelper db;
         private Context context;
 
@@ -112,21 +129,23 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         public void onPageSelected(int position) {
 
-            Log.d("current item", "" + mypager.getCurrentItem());
             currentPage = mypager.getCurrentItem();
-            Log.d("current item", arrayView.get(currentPage).getTitleManga());
-
-            // compare titlemanga of newRelease with array of favorite manga (title)
-            // create class exclusive for favoriteManga for the whole project and use getInstance. instead
-            if (isP) {
+            int id = db.getInstance(context).getManga_id(arrayView.get(currentPage).getTitleManga());
+            int isFollow = db.getInstance(context).isFollow(id);
+            if (isFollow == 1) {
                 favb.setBackgroundResource(R.drawable.yellowstar);
                 favb.setTag(R.drawable.yellowstar);
             } else {
                 favb.setBackgroundResource(R.drawable.greystar);
                 favb.setTag(R.drawable.greystar);
             }
-            isP = !isP;
-
         }
+
+
+        public int getCurrentPage() {
+            return mypager.getCurrentItem();
+        }
+
+
     }
 }
