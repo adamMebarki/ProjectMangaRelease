@@ -65,7 +65,7 @@ public class MangaClass implements Parcelable {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = title.toUpperCase();
     }
 
     public double getPrice() {

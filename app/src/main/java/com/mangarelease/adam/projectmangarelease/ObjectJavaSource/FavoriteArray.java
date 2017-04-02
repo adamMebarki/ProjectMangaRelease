@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class FavoriteArray {
 
-    private ArrayList<MangaClass> favorites;
+    public ArrayList<MangaClass> favorites;
 
     private FavoriteArray() {
         favorites = new ArrayList<MangaClass>();
@@ -21,9 +21,11 @@ public class FavoriteArray {
         return instance;
     }
 
-    public ArrayList getFavorites(){
+    public ArrayList getFavorites() {
         return favorites;
     }
 
-
+    public void setFavorites(ArrayList<MangaClass> array) {
+                favorites.addAll(array);
+    }
 }

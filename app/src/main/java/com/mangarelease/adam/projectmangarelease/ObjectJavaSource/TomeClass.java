@@ -40,11 +40,11 @@ public class TomeClass {
         if (m.find()) {
             title = title.replace(m.group(),"");
             this.titleManga = title.replace("-","");
-            this.titleManga = titleManga.trim();
+            this.titleManga = titleManga.trim().toUpperCase();
             this.num_vol = m.group();
 
         } else {
-            this.titleManga = title.trim();
+            this.titleManga = title.trim().toUpperCase();
         }
 
     }
@@ -54,7 +54,7 @@ public class TomeClass {
     }
 
     public void setTitleManga(String titleManga) {
-        this.titleManga = titleManga;
+        this.titleManga = titleManga.toUpperCase();
     }
 
     public void setNum_vol(String num_vol) {
