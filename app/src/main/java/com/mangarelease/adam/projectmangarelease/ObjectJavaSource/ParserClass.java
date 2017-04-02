@@ -1,6 +1,7 @@
 package com.mangarelease.adam.projectmangarelease.ObjectJavaSource;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -40,7 +41,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
             fetchHTML(params[0]);
         } catch (IOException e) {
             e.printStackTrace();
-
+            Log.d("Youhou","Ypouhou");
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         }
