@@ -20,17 +20,18 @@ public class TomeClass {
     private String image;
     private int tome_id;
     private String category;
+
     public TomeClass() {
         this.image = "";
         this.titleManga = "";
         this.desc = "";
         this.desc = "";
-        this.category="";
+        this.category = "";
     }
 
 
-    public TomeClass(String title, String description,String category) {
-        this.category=category;
+    public TomeClass(String title, String description, String category) {
+        this.category = category;
         this.image = this.retrievePicture(description);
         description = description.substring(description.indexOf("<p>"), description.indexOf("</p>"));
         description = description.replaceAll("<[^>]*>", "");
@@ -38,8 +39,8 @@ public class TomeClass {
         Pattern p = Pattern.compile("T[0-9]+");
         Matcher m = p.matcher(title);
         if (m.find()) {
-            title = title.replace(m.group(),"");
-            this.titleManga = title.replace("-","");
+            title = title.replace(m.group(), "");
+            this.titleManga = title.replace("-", "");
             this.titleManga = titleManga.trim().toUpperCase();
             this.num_vol = m.group();
 
@@ -98,7 +99,7 @@ public class TomeClass {
         this.manga_id = manga_id;
     }
 
-    public String getCategory(){
+    public String getCategory() {
         return category;
     }
 

@@ -78,30 +78,49 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         // if manga already exist change the status of followed.
         // if manga do not exist create new manga and add in the favorite liste
         if (v.getId() == favBut.getId()) {
-            Log.d("Page Current Tome/Page", "" + pageListener.getCurrentPage());
+
             MangaClass mg = new MangaClass();
             mg.setTitle(array.get(pageListener.getCurrentPage()).getTitleManga());
             mg.setCategory(array.get(pageListener.getCurrentPage()).getCategory());
-            Log.d("Page Title and Category", mg.getTitle() +  mg.getCategory());
+
             int id = (int) db.getInstance(getContext()).createManga(mg);
-            Log.d("Page New Manga_id or 0", "" + id);
             // New manga created -> add to the favorite list
             if (id != 0) {
-                   db.getInstance(getContext()).createFavorite(id,1);
+                db.getInstance(getContext()).createFavorite(id, 1);
+                this.AddTomeOfFavoriteManga(mg,id);
+
             } else { // manga already exist -> stop following or restart the following
-                Log.d("Page Manga_ID", "" + db.getInstance(getContext()).getManga_id(mg.getTitle()));
                 int tmp = db.getInstance(getContext()).getManga_id(mg.getTitle());
-                if (db.getInstance(getContext()).isFollow(tmp) == 0) // manga is not followed
+                if (db.getInstance(getContext()).isFollow(tmp) == 0) { // manga is not followed
                     db.getInstance(getContext()).updateFavorite(tmp, 1);
-                else // manga is followed
+                    this.AddTomeOfFavoriteManga(mg,id);
+                } else { // manga is followed
                     db.getInstance(getContext()).updateFavorite(tmp, 0);
+                }
             }
+
             if ((Integer) v.getTag() == R.drawable.greystar) {
                 favBut.setBackgroundResource(R.drawable.yellowstar);
                 favBut.setTag(R.drawable.yellowstar);
             } else {
                 favBut.setBackgroundResource(R.drawable.greystar);
                 favBut.setTag(R.drawable.greystar);
+            }
+        }
+    }
+
+
+    // Create new Favorite add the current tome chosen and others if in the parseList
+    private void AddTomeOfFavoriteManga(MangaClass mg,int id) {
+        for (int i = 0; i < array.size(); i++) {
+            if(array.get(i).getTitleManga().compareTo(mg.getTitle())==0){
+                Log.d("MANGA RELEASE : ",mg.getTitle() + " : " + array.get(i).getNum_vol());
+                TomeClass tome = new TomeClass();
+                tome.setNum_vol(array.get(i).getNum_vol());
+                tome.setDesc(array.get(i).getDesc());
+                tome.setImage(array.get(i).getImage());
+                tome.setManga_id(mg.getManga_id());
+                db.getInstance(getContext()).createTome(tome,id);
             }
         }
     }

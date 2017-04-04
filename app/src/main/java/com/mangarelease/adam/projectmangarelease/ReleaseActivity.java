@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
@@ -15,7 +16,9 @@ import android.widget.ImageView;
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.ContentReleaseSource.ReleaseFragment;
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource.ExpandableListAdapter;
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource.SlidingLayout;
+import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.ParserClass;
+import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.TomeClass;
 
 import java.util.ArrayList;
@@ -37,15 +40,13 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
     private ExpandableListView expandableList;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-
+    SqLiteHelper db;
     /*Temporary */
-    private ArrayList<String> array;
     private int NUM_PAGES = 5;
 
     /* Declaration of the content of the releasePart the parser and the fragment which will content the webview*/
     private ParserClass pars;
     private ReleaseFragment fragment;
-
 
 
     @SuppressLint("SetTextI18n")
@@ -78,9 +79,9 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         // Parsager of the webservice and create an arraylist of elements retrieve.
         pars = new ParserClass();
         pars.execute("");
-        while(pars.parsingComplete);
+        while (pars.parsingComplete) ;
 
-
+        AddTomeFavorite();
         //Instantiate the content of Release Activity
         NUM_PAGES = pars.getTomes().size();
         // Replace fragment main when activity start
@@ -90,10 +91,9 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         ft.add(R.id.release_fragment_content, fragment);
         ft.commit();
 
-
+        this.AddTomeFavorite();
 
     }
-
 
 
     /*
@@ -158,5 +158,32 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
 
     }
+
+
+    public void AddTomeFavorite() {
+
+        ArrayList<MangaClass> arrayManga = new ArrayList<>();
+        arrayManga.addAll(db.getInstance(this).getAllMangas());
+        if (!arrayManga.isEmpty()) {
+            for (int i = 0; i < arrayManga.size(); i++) {
+                String title = arrayManga.get(i).getTitle();
+                Log.d("Manga Release : ", arrayManga.get(i).getTitle() + "    ");
+                if (db.getInstance(this).isFollow(arrayManga.get(i).getManga_id()) == 1) { // if manga follow add automatically new tomes
+                    for(int j=0;j<pars.getTomes().size();j++){
+                        if(pars.getTomes().get(j).getTitleManga().compareTo(title)==0){
+                           TomeClass tome = new TomeClass();
+                            tome.setNum_vol(pars.getTomes().get(j).getNum_vol());
+                            tome.setDesc(pars.getTomes().get(j).getDesc());
+                            tome.setImage(pars.getTomes().get(j).getImage());
+                            tome.setManga_id(arrayManga.get(i).getManga_id());
+                            db.getInstance(this).createTome(tome,arrayManga.get(i).getManga_id());
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 
 }

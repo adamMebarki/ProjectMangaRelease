@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         libraryBut.setOnClickListener(this);
         db.getInstance(getApplicationContext());
         fav.getInstance();
-
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

@@ -349,6 +349,13 @@ public class SqLiteHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(tome_id)});
     }
 
+    public void deleteAllTomes(long manga_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TOME, KEY_TOME_MANGA_ID_FK + "= ?",
+                new String[]{String.valueOf(manga_id)});
+    }
+
+
     /**
      * Creating an author
      *
@@ -423,11 +430,11 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    public boolean TomeExists(String searchItem, int manga_id) {
+    public boolean TomeExists(String num_vol, int manga_id) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_TOME_NUM};
         String selection = KEY_TOME_NUM + " =?" + " AND " + KEY_TOME_MANGA_ID_FK + " = " + manga_id;
-        String[] selectionArgs = {searchItem,};
+        String[] selectionArgs = {num_vol,};
         String limit = "1";
         Cursor cursor = db.query(TABLE_TOME, columns, selection, selectionArgs, null, null, null, limit);
         boolean exists = (cursor.getCount() > 0);
