@@ -31,28 +31,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/Editlrl2">
+
         <EditText
+            android:id="@+id/text_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+            android:layout_weight="0.5" />
+
         <EditText
+            android:id="@+id/text_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+            android:layout_weight="0.5" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/Editlrl2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/mangaOk">
+
         <EditText
+            android:id="@+id/text_editor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
+            android:layout_weight="0.5" />
+
         <EditText
+            android:id="@+id/text_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3"/>
+            android:layout_weight="0.3" />
     </LinearLayout>
 
 

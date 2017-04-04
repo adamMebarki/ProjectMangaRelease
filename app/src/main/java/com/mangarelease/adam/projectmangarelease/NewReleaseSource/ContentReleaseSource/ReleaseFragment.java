@@ -82,7 +82,7 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
             MangaClass mg = new MangaClass();
             mg.setTitle(array.get(pageListener.getCurrentPage()).getTitleManga());
             mg.setCategory(array.get(pageListener.getCurrentPage()).getCategory());
-
+            mg.setEditor_name("Kurokawa");
             int id = (int) db.getInstance(getContext()).createManga(mg);
             // New manga created -> add to the favorite list
             if (id != 0) {

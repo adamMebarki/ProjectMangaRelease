@@ -4,8 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
+import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 
 /**
  * Created by Adam on 15/03/2017.
@@ -14,9 +18,11 @@ import android.widget.TextView;
 public class MangaActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button okayBut, cancelBut, valBut;
+    private EditText text_author,text_category,text_price,text_editor;
     private ImageButton editBut;
     private TextView title;
-
+    private MangaClass manga;
+    private SqLiteHelper db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,10 +34,16 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         valBut = (Button) findViewById(R.id.valEditBut);
         String text = getIntent().getStringExtra("title");
         title.setText(text);
+        manga = db.getInstance(getApplicationContext()).getManga(text);
         okayBut.setOnClickListener(this);
         editBut.setOnClickListener(this);
         cancelBut.setOnClickListener(this);
         valBut.setOnClickListener(this);
+
+        text_author = (EditText) findViewById(R.id.text_author);
+        text_editor = (EditText) findViewById(R.id.text_editor);
+        text_category = (EditText) findViewById(R.id.text_category);
+        text_price = (EditText) findViewById(R.id.text_price);
     }
 
     @Override

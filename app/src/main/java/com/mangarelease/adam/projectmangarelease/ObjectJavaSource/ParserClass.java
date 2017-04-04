@@ -41,7 +41,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
             fetchHTML(params[0]);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d("Youhou","Ypouhou");
+            Log.d("Youhou", "Ypouhou");
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         }
@@ -98,7 +98,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
                         } else if (tagname.equalsIgnoreCase("description")) {
                             desc = text;
                         } else if (tagname.equalsIgnoreCase("item")) {
-                            tome = new TomeClass(title, desc,"seinen");
+                            tome = new TomeClass(title, desc, "Seinen");
                             tomesReleases.add(tome);
                         }
                         break;

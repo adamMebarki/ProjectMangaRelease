@@ -364,10 +364,13 @@ public class SqLiteHelper extends SQLiteOpenHelper {
      */
     public long createAuthor(String author_name) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(KEY_AUTHOR_NAME, author_name);
-        long author_id = db.insert(TABLE_AUTHOR, null, values);
-        return author_id;
+        if (!this.AuthorExists(author_name)) {
+            ContentValues values = new ContentValues();
+            values.put(KEY_AUTHOR_NAME, author_name);
+            long author_id = db.insert(TABLE_AUTHOR, null, values);
+            return author_id;
+        }
+        return 0;
     }
 
 
@@ -457,6 +460,17 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
     }
 
+    public boolean AuthorExists(String name){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {KEY_AUTHOR_NAME};
+        String selection = KEY_AUTHOR_NAME + " =?";
+        String[] selectionArgs = {name,};
+        String limit = "1";
+        Cursor cursor = db.query(TABLE_AUTHOR, columns, selection, selectionArgs, null, null, null, limit);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
 
     public int getManga_id(String titleManga) {
         SQLiteDatabase db = this.getReadableDatabase();
