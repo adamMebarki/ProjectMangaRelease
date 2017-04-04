@@ -13,11 +13,6 @@ import android.widget.ListView;
 import com.mangarelease.adam.projectmangarelease.LibrarySource.listViewAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import static com.mangarelease.adam.projectmangarelease.LibrarySource.Constant.FIRST_COLUMN;
-import static com.mangarelease.adam.projectmangarelease.LibrarySource.Constant.SECOND_COLUMN;
-import static com.mangarelease.adam.projectmangarelease.LibrarySource.Constant.THIRD_COLUMN;
 
 /**
  * Created by Adam on 02/04/2017.
@@ -60,38 +55,48 @@ public class ConfirmDialog extends DialogFragment {
 
 
     public void initialiseList(ListView lv, listViewAdapter lva) {
-        ArrayList<HashMap> list;
-        ArrayList<MangaClass> array = new ArrayList<>();
-        array.addAll(db.getInstance(act.getApplicationContext()).getAllMangas());
-        list = new ArrayList<HashMap>();
-        HashMap tmp;
-        for (int i = 0; i < array.size(); i++) {
-            tmp = new HashMap();
-            tmp.put(FIRST_COLUMN, "" + array.get(i).getTitle());
-            tmp.put(SECOND_COLUMN, "");
-            tmp.put(THIRD_COLUMN, "");
-            list.add(tmp);
-        }
-       // lv.removeAllViewsInLayout();
+        lva.clear();
         lv.setAdapter(lva);
     }
 
 
     public void validateChoice(listViewAdapter lva) {
         ArrayList<MangaClass> array = new ArrayList<>();
-        array.addAll(db.getInstance(act.getApplicationContext()).getAllMangas());
-        for (int i = 0; i < array.size(); i++) {
-            Log.d("ConfirmDialog Manga : ", array.get(i).getTitle());
-            Log.d("ConfirmDialog Manga ID : ", array.get(i).getManga_id() + "");
-        }
-        if (!lva.getArrayFollow().isEmpty()) {
-            //db.getInstance(act.getApplicationContext()).updateFavorite(, 1);
+        // array.addAll(db.getInstance(act.getApplicationContext()).getAllMangas());
+        array.addAll(lva.arrayManga);
+        if (!lva.getArrayFollow().isEmpty()) {  // Manga are now follow
+            int position = 0;
+            for (int i = 0; i < lva.getArrayFollow().size(); i++) {
+                position = (int) lva.getArrayFollow().get(i);
+                db.getInstance(act.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 1);
+            }
         }
 
-        if (!lva.getArrayNoFollow().isEmpty()) {
-            //     db.getInstance(act.getApplicationContext()).updateFavorite(, 0);
+        if (!lva.getArrayNoFollow().isEmpty()) { // Manga are now not follow
+            int position = 0;
+            for (int i = 0; i < lva.getArrayNoFollow().size(); i++) {
+                position = (int) lva.getArrayNoFollow().get(i);
+                db.getInstance(act.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 0);
+            }
+
         }
-        if (!lva.getArrayTrashSelected().isEmpty()) {
+        if (!lva.getArrayTrashSelected().isEmpty()) { // Manga will be deleted
+            int position = 0;
+            for (int i = 0; i < lva.getArrayTrashSelected().size(); i++) {
+                position = (int) lva.getArrayTrashSelected().get(i);
+                db.getInstance(act.getApplicationContext()).deleteFavorite(array.get(position).getManga_id());
+                db.getInstance(act.getApplicationContext()).deleteManga(array.get(position).getManga_id());
+
+            }
+
+            lva.arrayManga.clear();
+            lva.arrayManga.addAll(db.getInstance(act.getApplicationContext()).getAllMangas());
+            lva.list.clear();
+            lva.populateList2();
+            lva.notifyDataSetChanged();
+            lv.setAdapter(lva);
+            Log.d("List LVA",lva.list.size()+"");
+            Log.d("List LVA",lva.arrayManga.size()+"");
         }
 
     }

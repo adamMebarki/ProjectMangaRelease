@@ -34,17 +34,21 @@ public class listViewAdapter extends BaseAdapter {
     private ArrayList arrayNoFollow;
     private ArrayList arrayFollow;
     private SqLiteHelper db;
-    private ArrayList<MangaClass> arrayManga;
+    public ArrayList<MangaClass> arrayManga;
+    private ArrayList arrayPosition;
 
-    public listViewAdapter(Activity activity, ArrayList<HashMap> list, ArrayList<MangaClass> arrayManga) {
+    public listViewAdapter(Activity activity) {
         super();
         this.activity = activity;
-        this.list = list;
+        this.list = new ArrayList<>();
         holder = new ViewHolder();
+        arrayPosition = new ArrayList();
         arrayTrash = new ArrayList();
         arrayFollow = new ArrayList();
         arrayNoFollow = new ArrayList();
-        this.arrayManga = arrayManga;
+        arrayManga = new ArrayList<>();
+        arrayManga.addAll(db.getInstance(activity.getApplicationContext()).getAllMangas());
+        populateList2();
     }
 
     @Override
@@ -114,11 +118,10 @@ public class listViewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View arg0) {
                     boolean isChecked = ((CheckBox) arg0).isChecked();
-                    String tag = arg0.getTag().toString(); // position in the array not the manga_id
                     if (isChecked) { //
                         // Add manga in follow list if not already && remove in no follow list also
                         if (!arrayFollow.contains(arg0.getTag())) {
-                            Log.d("Tag ",""+arg0.getTag().toString());
+                            Log.d("Tag ", "" + arg0.getTag().toString());
                             arrayFollow.add(arg0.getTag());
                         }
                         if (arrayNoFollow.contains(arg0.getTag())) {
@@ -134,25 +137,25 @@ public class listViewAdapter extends BaseAdapter {
                 }
 
             });
-
-
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        HashMap map = list.get(position);
+        HashMap map = list.get(position); // revoir si hashmap pas mieux a la place d'une list
         holder.txtColName.setText(map.get(FIRST_COLUMN).toString());
         holder.txtColFav.setText(map.get(SECOND_COLUMN).toString());
         holder.txtColTrash.setText(map.get(THIRD_COLUMN).toString());
-        int id = arrayManga.get(position).getManga_id();
-        if (db.getInstance(activity.getApplicationContext()).isFollow(id) == 0)
+        Log.d("ListViewAdapter : ", "Position : " + position + "   Size ArrayList" + arrayManga.size());
+        Log.d("TITLE : ", holder.txtColName.getText().toString());
+        String title = map.get(FIRST_COLUMN).toString();
+        int idmg = db.getInstance(activity.getApplicationContext()).getManga_id(title);
+        if (db.getInstance(activity.getApplicationContext()).isFollow(idmg) == 0)
             holder.txtColFav.setChecked(false);
         return convertView;
     }
 
 
     public ArrayList getArrayTrashSelected() {
-
         return arrayTrash;
     }
 
@@ -163,4 +166,25 @@ public class listViewAdapter extends BaseAdapter {
     public ArrayList getArrayNoFollow() {
         return arrayNoFollow;
     }
+
+
+    public void clear() {
+        this.arrayNoFollow.clear();
+        this.arrayFollow.clear();
+        this.arrayTrash.clear();
+    }
+
+
+    public void populateList2() {
+        HashMap tmp;
+
+        for (int i = 0; i < arrayManga.size(); i++) {
+            tmp = new HashMap();
+            tmp.put(FIRST_COLUMN, "" + arrayManga.get(i).getTitle());
+            tmp.put(SECOND_COLUMN, "");
+            tmp.put(THIRD_COLUMN, "");
+            list.add(tmp);
+        }
+    }
+
 }
