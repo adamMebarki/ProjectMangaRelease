@@ -105,7 +105,8 @@ public class MangaClass implements Parcelable {
     }
 
     public void setVolumes(ArrayList<TomeClass> volumes) {
-        this.volumes = volumes;
+        this.volumes.clear();
+        this.volumes.addAll(volumes);
     }
 
     public void addVolume(TomeClass tome) {

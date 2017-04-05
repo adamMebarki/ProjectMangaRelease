@@ -2,14 +2,21 @@ package com.mangarelease.adam.projectmangarelease;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
+import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.TomeClass;
+
+import java.util.ArrayList;
 
 /**
  * Created by Adam on 15/03/2017.
@@ -23,6 +30,8 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
     private TextView title;
     private MangaClass manga;
     private SqLiteHelper db;
+    private TableLayout table;
+    private TableRow row;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +46,10 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         manga = db.getInstance(getApplicationContext()).getManga(text);
         String author_name = db.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
         manga.setAuthor_name(author_name);
+        manga.setVolumes((ArrayList<TomeClass>) db.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));
+        for(int i=0;i<manga.getVolumes().size();i++){
+            Log.d("Volumes : ",manga.getVolumes().get(i).getNum_vol());
+        }
         okayBut.setOnClickListener(this);
         editBut.setOnClickListener(this);
         cancelBut.setOnClickListener(this);
@@ -55,6 +68,31 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         text_price.setEnabled(false);
         text_price.setText(""+manga.getPrice());
 
+
+        // Table Layout part
+       /* Find Tablelayout defined in main.xml */
+        table = (TableLayout) findViewById(R.id.tableVolume);
+        table.setGravity(Gravity.CENTER_HORIZONTAL);
+        TableRow tr = new TableRow(this);
+        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
+
+        createTable();
+      /*  Button b = new Button(this);
+        b.setText("Button 1 ");
+        b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
+        tr.addView(b);
+
+        Button b2 = new Button(this);
+        b2.setText("Button 2 ");
+        b2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
+        tr.addView(b2);
+
+        Button b3 = new Button(this);
+        b3.setText("Button 3 ");
+        b3.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        tr.addView(b3);
+        table.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+*/
     }
 
     @Override
@@ -103,4 +141,26 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
 
 
     }
+
+
+    public void createTable(){
+        Button but;
+        TableRow row = new TableRow(this);
+        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
+        for(int i=1;i<=30;i++){
+            but = new Button(this);
+            but.setText("Button "+i);
+            but.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
+            row.addView(but);
+            if(i%3==0){
+                table.addView(row);
+                row = new TableRow(this);
+                row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
+            }
+        }
+
+
+    }
+
+
 }
