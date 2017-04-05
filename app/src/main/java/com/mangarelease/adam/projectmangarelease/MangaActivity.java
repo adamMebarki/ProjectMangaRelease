@@ -35,15 +35,26 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         String text = getIntent().getStringExtra("title");
         title.setText(text);
         manga = db.getInstance(getApplicationContext()).getManga(text);
+        String author_name = db.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
+        manga.setAuthor_name(author_name);
         okayBut.setOnClickListener(this);
         editBut.setOnClickListener(this);
         cancelBut.setOnClickListener(this);
         valBut.setOnClickListener(this);
 
         text_author = (EditText) findViewById(R.id.text_author);
+        text_author.setEnabled(false);
+        text_author.setText(manga.getAuthor_name());
         text_editor = (EditText) findViewById(R.id.text_editor);
+        text_editor.setEnabled(false);
+        text_editor.setText(manga.getEditor_name());
         text_category = (EditText) findViewById(R.id.text_category);
+        text_category.setEnabled(false);
+        text_category.setText(manga.getCategory());
         text_price = (EditText) findViewById(R.id.text_price);
+        text_price.setEnabled(false);
+        text_price.setText(""+manga.getPrice());
+
     }
 
     @Override
@@ -55,6 +66,10 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                  okayBut.setVisibility(View.INVISIBLE);
                  cancelBut.setVisibility(View.VISIBLE);
                  valBut.setVisibility(View.VISIBLE);
+                 text_author.setEnabled(true);
+                 text_editor.setEnabled(true);
+                 text_category.setEnabled(true);
+                 text_price.setEnabled(true);
                  break;
              case R.id.mangaOk:
                  this.finish();
@@ -64,12 +79,21 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                  okayBut.setVisibility(View.VISIBLE);
                  cancelBut.setVisibility(View.INVISIBLE);
                  valBut.setVisibility(View.INVISIBLE);
+                 text_author.setEnabled(false);
+                 text_editor.setEnabled(false);
+                 text_category.setEnabled(false);
+                 text_price.setEnabled(false);
                  break;
              case R.id.valEditBut:
                  editBut.setVisibility(View.VISIBLE);
                  okayBut.setVisibility(View.VISIBLE);
                  cancelBut.setVisibility(View.INVISIBLE);
                  valBut.setVisibility(View.INVISIBLE);
+                 text_author.setEnabled(false);
+                 text_editor.setEnabled(false);
+                 text_category.setEnabled(false);
+                 text_price.setEnabled(false);
+                 // Make change on database
                  break;
              default:
                  break;

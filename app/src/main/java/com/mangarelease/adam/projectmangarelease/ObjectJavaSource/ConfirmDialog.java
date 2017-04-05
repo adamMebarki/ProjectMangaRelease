@@ -39,7 +39,7 @@ public class ConfirmDialog extends DialogFragment {
                 .setPositiveButton("Validate", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         validateChoice(lva);
-                        //  act.finish();
+                          act.finish();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

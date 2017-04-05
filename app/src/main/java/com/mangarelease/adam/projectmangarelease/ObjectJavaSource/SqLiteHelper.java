@@ -180,6 +180,20 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         }
     }
 
+    public int getManga_id(String titleManga) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int manga_id = 0;
+        String selectQuery = "SELECT * FROM " + TABLE_MANGA +
+                " WHERE " + KEY_MANGA_TITLE + " LIKE " + "'" + titleManga + "'";
+        Cursor c = db.rawQuery(selectQuery, null);
+        if (c.getCount() > 0) {
+            c.moveToNext();
+            manga_id = c.getInt(c.getColumnIndex(KEY_ID));
+            return manga_id;
+        }
+        return manga_id;
+    }
+
     /**
      * Getting all mangas
      *
@@ -373,6 +387,24 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return 0;
     }
 
+    public String getAuthor(long author_id){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT " + KEY_AUTHOR_NAME + " FROM " + TABLE_AUTHOR +
+                " WHERE " + KEY_ID + " = " + author_id;
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.getCount() > 0) {
+            c.moveToNext();
+            String name = c.getString(c.getColumnIndex(KEY_AUTHOR_NAME));
+            c.close();
+            return name;
+        }
+        c.close();
+        return "";
+
+    }
+
 
     public long createFavorite(int manga_id, int followed) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -423,11 +455,11 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     public boolean MangaExists(String searchItem) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_MANGA_TITLE};
-        String selection = KEY_MANGA_TITLE + " =?";
+        String selection = KEY_MANGA_TITLE + " LIKE?";
         String[] selectionArgs = {searchItem};
         String limit = "1";
-
         Cursor cursor = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
+        cursor.moveToFirst();
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
@@ -472,19 +504,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    public int getManga_id(String titleManga) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        int manga_id = 0;
-        String selectQuery = "SELECT * FROM " + TABLE_MANGA +
-                " WHERE " + KEY_MANGA_TITLE + " LIKE " + "'" + titleManga + "%'";
-        Cursor c = db.rawQuery(selectQuery, null);
-        if (c.getCount() > 0) {
-            c.moveToNext();
-            manga_id = c.getInt(c.getColumnIndex(KEY_ID));
-            return manga_id;
-        }
-        return manga_id;
-    }
+
     // get followed to turn star in grey or yellow. favorite or not ? from table favorites
 
     public int isFollow(int id) {

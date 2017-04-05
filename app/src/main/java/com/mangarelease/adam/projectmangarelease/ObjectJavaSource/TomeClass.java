@@ -40,7 +40,9 @@ public class TomeClass {
         Matcher m = p.matcher(title);
         if (m.find()) {
             title = title.replace(m.group(), "");
+            title = title.replace("  "," ");
             this.titleManga = title.replace("-", "");
+
             this.titleManga = titleManga.trim().toUpperCase();
             this.num_vol = m.group();
 

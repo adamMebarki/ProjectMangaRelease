@@ -18,4 +18,6 @@
     <!-- String Manga Activity -->
     <string name="manga_title">Manga Title</string>
     <string name="manga_ok">OK</string>
+    <string name="manga_validate">Validate</string>
+    <string name="manga_cancel">Cancel</string>
 </resources>

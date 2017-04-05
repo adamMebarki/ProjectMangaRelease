@@ -34,15 +34,19 @@
 
         <EditText
             android:id="@+id/text_author"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:textColor="#000000"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/text_category"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:textColor="#000000"
+            android:singleLine="true" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/Editlrl2"
@@ -52,15 +56,19 @@
 
         <EditText
             android:id="@+id/text_editor"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:textColor="#000000"
+            android:singleLine="true"            />
 
         <EditText
             android:id="@+id/text_price"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3" />
+            android:layout_weight="0.3"
+            android:textColor="#000000"
+            android:singleLine="true"/>
     </LinearLayout>
 
 
@@ -87,13 +95,14 @@
 
     <Button
         android:id="@+id/cancelEditBut"
+        android:text="@string/manga_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/editBut"
         android:layout_alignStart="@+id/editBut"
         android:layout_alignTop="@+id/mangaOk"
         android:visibility="invisible"
-        android:text="Button" />
+         />
 
     <Button
         android:id="@+id/valEditBut"
@@ -103,6 +112,6 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/Editlrl2"
         android:visibility="invisible"
-        android:text="Button" />
+        android:text="@string/manga_validate" />
 
 </RelativeLayout>

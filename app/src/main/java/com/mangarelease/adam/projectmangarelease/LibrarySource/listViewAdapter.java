@@ -187,4 +187,8 @@ public class listViewAdapter extends BaseAdapter {
         }
     }
 
+    public ArrayList<HashMap> getList(){
+        return list;
+    }
+
 }

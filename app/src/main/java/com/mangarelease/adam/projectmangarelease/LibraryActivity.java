@@ -13,20 +13,15 @@ import com.mangarelease.adam.projectmangarelease.LibrarySource.listViewAdapter;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.ConfirmDialog;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import static com.mangarelease.adam.projectmangarelease.LibrarySource.Constant.FIRST_COLUMN;
 
 public class LibraryActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
-    private ArrayList<HashMap> list;
     private Button retBut, valBut;
     ListView lview;
     int impactPoint = 0;
     SqLiteHelper db;
     listViewAdapter adapter;
-    int tailleList=0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,10 +88,11 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
                         // Open activity description manga
                         if (dif == 0) {
                             point = lview.pointToPosition((int) event.getX(), (int) event.getY());
+                            Log.d("Library activity", (String) adapter.getList().get(point).get(FIRST_COLUMN));
                             //  toast = Toast.makeText(v.getContext(), "Click : " + list.get(point).get(FIRST_COLUMN), duration);
                             //  toast.show();
                             Intent in = new Intent(this, MangaActivity.class);
-                            in.putExtra("title", (String) list.get(point).get(FIRST_COLUMN));
+                            in.putExtra("title", (String) adapter.getList().get(point).get(FIRST_COLUMN));
                             startActivity(in);
                         }
                         break;
