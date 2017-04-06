@@ -4,6 +4,8 @@ package com.mangarelease.adam.projectmangarelease.ObjectJavaSource;
  * Created by Adam on 19/03/2017.
  */
 
+import android.support.annotation.NonNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +13,7 @@ import java.util.regex.Pattern;
  * Created by Adam on 19/03/2017.
  */
 
-public class TomeClass {
+public class TomeClass implements Comparable<TomeClass> {
 
     private String titleManga;
     private int manga_id;
@@ -40,7 +42,7 @@ public class TomeClass {
         Matcher m = p.matcher(title);
         if (m.find()) {
             title = title.replace(m.group(), "");
-            title = title.replace("  "," ");
+            title = title.replace("  ", " ");
             this.titleManga = title.replace("-", "");
 
             this.titleManga = titleManga.trim().toUpperCase();
@@ -110,5 +112,16 @@ public class TomeClass {
         String urlpict = desc.substring(desc.indexOf("https"));
         String img = urlpict.substring(0, urlpict.indexOf("\" alt"));
         return img;
+    }
+
+
+    @Override
+    public int compareTo(@NonNull TomeClass tome) {
+        int num1 = Integer.parseInt(num_vol.replaceAll("T", ""));
+        int num2 = Integer.parseInt(tome.getNum_vol().replaceAll("T", ""));
+        if(num1>num2)
+            return 1;
+        else
+            return -1;
     }
 }

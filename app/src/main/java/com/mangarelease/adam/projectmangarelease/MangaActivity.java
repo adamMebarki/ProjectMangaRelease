@@ -1,6 +1,10 @@
 package com.mangarelease.adam.projectmangarelease;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,12 +15,14 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.TomeClass;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Adam on 15/03/2017.
@@ -25,13 +31,16 @@ import java.util.ArrayList;
 public class MangaActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button okayBut, cancelBut, valBut;
-    private EditText text_author,text_category,text_price,text_editor;
+    private EditText text_author, text_category, text_price, text_editor;
     private ImageButton editBut;
     private TextView title;
     private MangaClass manga;
     private SqLiteHelper db;
     private TableLayout table;
     private TableRow row;
+    private static Float scale;
+    private View.OnClickListener mListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +56,10 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         String author_name = db.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
         manga.setAuthor_name(author_name);
         manga.setVolumes((ArrayList<TomeClass>) db.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));
-        for(int i=0;i<manga.getVolumes().size();i++){
-            Log.d("Volumes : ",manga.getVolumes().get(i).getNum_vol());
+        for (int i = 0; i < manga.getVolumes().size(); i++) {
+            Log.d("Volumes : ", manga.getVolumes().get(i).getNum_vol());
         }
+        Collections.sort(manga.getVolumes());
         okayBut.setOnClickListener(this);
         editBut.setOnClickListener(this);
         cancelBut.setOnClickListener(this);
@@ -66,101 +76,122 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         text_category.setText(manga.getCategory());
         text_price = (EditText) findViewById(R.id.text_price);
         text_price.setEnabled(false);
-        text_price.setText(""+manga.getPrice());
+        text_price.setText("" + manga.getPrice());
 
 
         // Table Layout part
        /* Find Tablelayout defined in main.xml */
         table = (TableLayout) findViewById(R.id.tableVolume);
         table.setGravity(Gravity.CENTER_HORIZONTAL);
-        TableRow tr = new TableRow(this);
-        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
-
         createTable();
-      /*  Button b = new Button(this);
-        b.setText("Button 1 ");
-        b.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
-        tr.addView(b);
 
-        Button b2 = new Button(this);
-        b2.setText("Button 2 ");
-        b2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
-        tr.addView(b2);
 
-        Button b3 = new Button(this);
-        b3.setText("Button 3 ");
-        b3.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-        tr.addView(b3);
-        table.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-*/
     }
 
     @Override
     public void onClick(View v) {
 
-         switch (v.getId()){
-             case R.id.editBut:
-                 editBut.setVisibility(View.INVISIBLE);
-                 okayBut.setVisibility(View.INVISIBLE);
-                 cancelBut.setVisibility(View.VISIBLE);
-                 valBut.setVisibility(View.VISIBLE);
-                 text_author.setEnabled(true);
-                 text_editor.setEnabled(true);
-                 text_category.setEnabled(true);
-                 text_price.setEnabled(true);
-                 break;
-             case R.id.mangaOk:
-                 this.finish();
-                 break;
-             case R.id.cancelEditBut:
-                 editBut.setVisibility(View.VISIBLE);
-                 okayBut.setVisibility(View.VISIBLE);
-                 cancelBut.setVisibility(View.INVISIBLE);
-                 valBut.setVisibility(View.INVISIBLE);
-                 text_author.setEnabled(false);
-                 text_editor.setEnabled(false);
-                 text_category.setEnabled(false);
-                 text_price.setEnabled(false);
-                 break;
-             case R.id.valEditBut:
-                 editBut.setVisibility(View.VISIBLE);
-                 okayBut.setVisibility(View.VISIBLE);
-                 cancelBut.setVisibility(View.INVISIBLE);
-                 valBut.setVisibility(View.INVISIBLE);
-                 text_author.setEnabled(false);
-                 text_editor.setEnabled(false);
-                 text_category.setEnabled(false);
-                 text_price.setEnabled(false);
-                 // Make change on database
-                 break;
-             default:
-                 break;
-
-
-         }
-
-
-    }
-
-
-    public void createTable(){
-        Button but;
-        TableRow row = new TableRow(this);
-        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
-        for(int i=1;i<=30;i++){
-            but = new Button(this);
-            but.setText("Button "+i);
-            but.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
-            row.addView(but);
-            if(i%3==0){
-                table.addView(row);
-                row = new TableRow(this);
-                row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,1f));
-            }
+        switch (v.getId()) {
+            case R.id.editBut:
+                editBut.setVisibility(View.INVISIBLE);
+                okayBut.setVisibility(View.INVISIBLE);
+                cancelBut.setVisibility(View.VISIBLE);
+                valBut.setVisibility(View.VISIBLE);
+                text_author.setEnabled(true);
+                text_editor.setEnabled(true);
+                text_category.setEnabled(true);
+                text_price.setEnabled(true);
+                break;
+            case R.id.mangaOk:
+                this.finish();
+                break;
+            case R.id.cancelEditBut:
+                editBut.setVisibility(View.VISIBLE);
+                okayBut.setVisibility(View.VISIBLE);
+                cancelBut.setVisibility(View.INVISIBLE);
+                valBut.setVisibility(View.INVISIBLE);
+                text_author.setEnabled(false);
+                text_editor.setEnabled(false);
+                text_category.setEnabled(false);
+                text_price.setEnabled(false);
+                break;
+            case R.id.valEditBut:
+                editBut.setVisibility(View.VISIBLE);
+                okayBut.setVisibility(View.VISIBLE);
+                cancelBut.setVisibility(View.INVISIBLE);
+                valBut.setVisibility(View.INVISIBLE);
+                text_author.setEnabled(false);
+                text_editor.setEnabled(false);
+                text_category.setEnabled(false);
+                text_price.setEnabled(false);
+                // Make change on database
+                break;
+            default:
+                break;
         }
 
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void createTable() {
+        Button but;
+        android.widget.TableRow.LayoutParams p = new android.widget.TableRow.LayoutParams();
+        p.rightMargin = dpToPixel(10, getApplicationContext()); // right-margin = 10dp
+        TableRow row = new TableRow(this);
+        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
+        row.setPadding(0, 20, 20, 0);
+        for (int i = 0; i < manga.getVolumes().size(); i++) {
+            but = new Button(this);
+            but.setId(i);
+            but.setTag("GREY");
+            but.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_normal));
+            but.setGravity(Gravity.CENTER_HORIZONTAL);
+            but.setText(manga.getVolumes().get(i).getNum_vol());
+            but.setLayoutParams(p);
+            but.setTag(manga.getVolumes().get(i).getNum_vol());
+            but.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (v.getTag().toString().compareTo("GREEN") != 0) {
+                        v.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_clicked));
+                        v.setTag("GREEN");
+                    } else {
+                        v.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_normal));
+                        v.setTag("GREY");
+                    }
+                }
+            });
+            but.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Hello toast!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                    return true;
+                }
+            });
+            row.addView(but);
+            if (i % 2 == 0 && i != 0) {
+                table.addView(row);
+                row = new TableRow(this);
+                row.setPadding(0, 20, 20, 0);
+                row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
+            }
+        }
+        table.addView(row);
+
 
     }
 
+
+    public static int dpToPixel(int dp, Context context) {
+        if (scale == null)
+            scale = context.getResources().getDisplayMetrics().density;
+        return (int) ((float) dp * scale);
+    }
 
 }
