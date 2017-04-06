@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     private static final String LOG = "DatabaseHelper";
 
     // Database Version
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 9;
 
     // Database Name
     private static final String DATABASE_NAME = "MangaReleases";
@@ -162,10 +163,16 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     // Work
     public MangaClass getManga(String titleManga) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + TABLE_MANGA +
-                " WHERE " + KEY_MANGA_TITLE + " LIKE " + "'" + titleManga + "'";
+        /*String selectQuery = "SELECT * FROM " + TABLE_MANGA +
+                " WHERE " + KEY_MANGA_TITLE + " LIKE " + "'" + titleManga + "'";*/
+        String[] columns = {"*"};
+        String selection = KEY_MANGA_TITLE + " =?";
+        String[] selectionArgs = {titleManga,};
+        String limit = "1";
+        Cursor c = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
+
         MangaClass mg = null;
-        Cursor c = db.rawQuery(selectQuery, null);
+        //Cursor c = db.rawQuery(selectQuery, null);
         if (c.getCount() > 0) {
             c.moveToNext();
             mg = new MangaClass();
@@ -184,9 +191,19 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     public int getManga_id(String titleManga) {
         SQLiteDatabase db = this.getReadableDatabase();
         int manga_id = 0;
-        String selectQuery = "SELECT * FROM " + TABLE_MANGA +
+     /*   String selectQuery = "SELECT * FROM " + TABLE_MANGA +
                 " WHERE " + KEY_MANGA_TITLE + " LIKE " + "'" + titleManga + "'";
-        Cursor c = db.rawQuery(selectQuery, null);
+        Log.d("QUERY : ", selectQuery);
+        String select = "SELECT * FROM " + TABLE_MANGA +
+                " WHERE " + KEY_MANGA_TITLE + " = ?"
+*/
+        String[] columns = {KEY_ID};
+        String selection = KEY_MANGA_TITLE + " =?";
+        String[] selectionArgs = {titleManga,};
+        String limit = "1";
+        Cursor c = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
+
+        //Cursor c = db.rawQuery(selectQuery, null);
         if (c.getCount() > 0) {
             c.moveToNext();
             manga_id = c.getInt(c.getColumnIndex(KEY_ID));
@@ -474,8 +491,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_TOME_NUM};
         String selection = KEY_TOME_NUM + " =?" + " AND " + KEY_TOME_MANGA_ID_FK + " = " + manga_id;
-        String[] selectionArgs = {num_vol,};
+        String[] selectionArgs = {num_vol};
         String limit = "1";
+        Log.d("TOME EXISTS", selection + selectionArgs + "manga_id : " + manga_id + " NUM vol : " + num_vol);
         Cursor cursor = db.query(TABLE_TOME, columns, selection, selectionArgs, null, null, null, limit);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();

@@ -91,8 +91,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
 
                         // Open activity description manga
                         if (dif == 0) {
+                            Log.d("Error","ERROR");
                             point = lview.pointToPosition((int) event.getX(), (int) event.getY());
-                            Log.d("Library activity", (String) adapter.getList().get(point).get(FIRST_COLUMN));
                             //  toast = Toast.makeText(v.getContext(), "Click : " + list.get(point).get(FIRST_COLUMN), duration);
                             //  toast.show();
                             Intent in = new Intent(this, MangaActivity.class);

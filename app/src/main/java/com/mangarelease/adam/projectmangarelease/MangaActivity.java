@@ -51,6 +51,8 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         String text = getIntent().getStringExtra("title");
         title.setText(text);
         manga = db.getInstance(getApplicationContext()).getManga(text);
+        if(manga == null)
+            Log.d("YES","YES  " + text);
         String author_name = db.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
         manga.setAuthor_name(author_name);
         manga.setVolumes((ArrayList<TomeClass>) db.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));

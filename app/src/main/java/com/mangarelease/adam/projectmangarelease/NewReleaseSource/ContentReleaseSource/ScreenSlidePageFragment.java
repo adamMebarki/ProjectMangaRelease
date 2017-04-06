@@ -27,6 +27,7 @@ public class ScreenSlidePageFragment extends Fragment {
         this.image = currentTome.getImage();
         this.desc = currentTome.getDesc();
         this.title = currentTome.getTitleManga();
+        this.title = title.replaceAll("''","'");
         this.num = currentTome.getNum_vol();
     }
 

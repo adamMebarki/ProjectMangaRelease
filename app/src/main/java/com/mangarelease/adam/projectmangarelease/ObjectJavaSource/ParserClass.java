@@ -83,14 +83,14 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
             myparser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             myparser.setInput(stream, null);
 
-            parseXML(myparser,cle);
+            parseXML(myparser, cle);
             stream.close();
             conn.disconnect();
         }
     }
 
 
-    public void parseXML(XmlPullParser myParser,String category) {
+    public void parseXML(XmlPullParser myParser, String category) {
 
         int event;
         String title = "";
@@ -110,6 +110,11 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
                     case XmlPullParser.END_TAG:
                         if (tagname.equalsIgnoreCase("title")) {
                             title = text;
+                            if (title.contains("tome "))
+                                title = title.replaceAll("tome ", "T");
+                            if (title.contains("!"))
+                                title = title.replaceAll("!", "");
+
                         } else if (tagname.equalsIgnoreCase("description")) {
                             desc = text;
                         } else if (tagname.equalsIgnoreCase("item")) {

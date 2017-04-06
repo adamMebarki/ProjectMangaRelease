@@ -23,7 +23,7 @@ public class MangaClass implements Parcelable {
 
 
     public MangaClass() {
-        this.manga_id=1; // no author name by default
+        this.manga_id=0; //
         this.title="";
         this.price = 0.0;
         this.editor_name = "";

@@ -11,7 +11,16 @@
         android:text="First"
         android:layout_weight="2.5"
         android:textSize="30dp"
-       >
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        >
     </TextView>
 
     <CheckBox

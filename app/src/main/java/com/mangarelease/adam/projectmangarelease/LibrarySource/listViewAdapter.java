@@ -143,14 +143,14 @@ public class listViewAdapter extends BaseAdapter {
         }
         HashMap map = list.get(position); // revoir si hashmap pas mieux a la place d'une list
         holder.txtColName.setText(map.get(FIRST_COLUMN).toString());
+        holder.txtColName.setSelected(true);
         holder.txtColFav.setText(map.get(SECOND_COLUMN).toString());
         holder.txtColTrash.setText(map.get(THIRD_COLUMN).toString());
-        Log.d("ListViewAdapter : ", "Position : " + position + "   Size ArrayList" + arrayManga.size());
-        Log.d("TITLE : ", holder.txtColName.getText().toString());
         String title = map.get(FIRST_COLUMN).toString();
         int idmg = db.getInstance(activity.getApplicationContext()).getManga_id(title);
-        if (db.getInstance(activity.getApplicationContext()).isFollow(idmg) == 0)
+        if (db.getInstance(activity.getApplicationContext()).isFollow(idmg) == 0) {
             holder.txtColFav.setChecked(false);
+        }
         return convertView;
     }
 

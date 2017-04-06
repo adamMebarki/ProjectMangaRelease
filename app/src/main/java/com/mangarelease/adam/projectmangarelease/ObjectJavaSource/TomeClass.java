@@ -29,7 +29,7 @@ public class TomeClass implements Comparable<TomeClass> {
         this.titleManga = "";
         this.desc = "";
         this.category = "";
-        this.isBuy=0;
+        this.isBuy = 0;
     }
 
 
@@ -44,15 +44,15 @@ public class TomeClass implements Comparable<TomeClass> {
             title = title.replace(m.group(), "");
             title = title.replace("  ", " ");
             this.titleManga = title.replace("-", "");
-
             this.titleManga = titleManga.trim().toUpperCase();
             this.num_vol = m.group();
-
         } else {
             this.titleManga = title.trim().toUpperCase();
         }
+        if (this.titleManga.contains("'"))
+            this.titleManga = this.titleManga.replaceAll("'", "''");
         this.category = category;
-        this.isBuy=0;
+        this.isBuy = 0;
 
     }
 
@@ -109,12 +109,12 @@ public class TomeClass implements Comparable<TomeClass> {
         return category;
     }
 
-public int getIsBuy(){
-    return isBuy;
-}
+    public int getIsBuy() {
+        return isBuy;
+    }
 
-    public void setIsBuy(int ib){
-        this.isBuy=ib;
+    public void setIsBuy(int ib) {
+        this.isBuy = ib;
     }
 
     protected String retrievePicture(String desc) {
@@ -128,7 +128,7 @@ public int getIsBuy(){
     public int compareTo(@NonNull TomeClass tome) {
         int num1 = Integer.parseInt(num_vol.replaceAll("T", ""));
         int num2 = Integer.parseInt(tome.getNum_vol().replaceAll("T", ""));
-        if(num1>num2)
+        if (num1 > num2)
             return 1;
         else
             return -1;
