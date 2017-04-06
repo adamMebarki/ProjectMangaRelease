@@ -43,21 +43,25 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
             this.finish();
 
         } else if (v.getId() == valBut.getId()) {
-            Log.d("ArrayLib","HERE");
-                if(adapter !=null){
-                    for(int i=0;i<adapter.getArrayTrashSelected().size();i++){
-                        Log.d("ArrayLibTrash",""+ adapter.getArrayTrashSelected().get(i).toString());
-                    }
-                    for(int i=0;i<adapter.getArrayFollow().size();i++){
-                        Log.d("ArrayLibFollow",""+ adapter.getArrayFollow().get(i).toString());
-                    }
-                    for(int i=0;i<adapter.getArrayNoFollow().size();i++){
-                        Log.d("ArrayLibNoFollow",""+ adapter.getArrayNoFollow().get(i).toString());
-                    }
-                    Log.d("Stop : ","-------------------------------------------------------------");
+            Log.d("ArrayLib", "HERE");
+            if (adapter != null) {
+                for (int i = 0; i < adapter.getArrayTrashSelected().size(); i++) {
+                    Log.d("ArrayLibTrash", "" + adapter.getArrayTrashSelected().get(i).toString());
                 }
-            ConfirmDialog diag = new ConfirmDialog(this,lview,adapter);
-            diag.show(getSupportFragmentManager(),"Test");
+                for (int i = 0; i < adapter.getArrayFollow().size(); i++) {
+                    Log.d("ArrayLibFollow", "" + adapter.getArrayFollow().get(i).toString());
+                }
+                for (int i = 0; i < adapter.getArrayNoFollow().size(); i++) {
+                    Log.d("ArrayLibNoFollow", "" + adapter.getArrayNoFollow().get(i).toString());
+                }
+                Log.d("Stop : ", "-------------------------------------------------------------");
+            }
+            if (adapter.getArrayTrashSelected().isEmpty() && adapter.getArrayFollow().isEmpty() && adapter.getArrayNoFollow().isEmpty()) {
+                this.finish();
+            } else {
+                ConfirmDialog diag = new ConfirmDialog(this, lview, adapter);
+                diag.show(getSupportFragmentManager(), "Test");
+            }
         }
     }
 
@@ -102,8 +106,6 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
 
         return false;
     }
-
-
 
 
 }

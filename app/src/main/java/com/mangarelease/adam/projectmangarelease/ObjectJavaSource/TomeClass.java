@@ -21,19 +21,19 @@ public class TomeClass implements Comparable<TomeClass> {
     private String desc;
     private String image;
     private int tome_id;
+    private int isBuy;
     private String category;
 
     public TomeClass() {
         this.image = "";
         this.titleManga = "";
         this.desc = "";
-        this.desc = "";
         this.category = "";
+        this.isBuy=0;
     }
 
 
     public TomeClass(String title, String description, String category) {
-        this.category = category;
         this.image = this.retrievePicture(description);
         description = description.substring(description.indexOf("<p>"), description.indexOf("</p>"));
         description = description.replaceAll("<[^>]*>", "");
@@ -51,6 +51,8 @@ public class TomeClass implements Comparable<TomeClass> {
         } else {
             this.titleManga = title.trim().toUpperCase();
         }
+        this.category = category;
+        this.isBuy=0;
 
     }
 
@@ -107,6 +109,13 @@ public class TomeClass implements Comparable<TomeClass> {
         return category;
     }
 
+public int getIsBuy(){
+    return isBuy;
+}
+
+    public void setIsBuy(int ib){
+        this.isBuy=ib;
+    }
 
     protected String retrievePicture(String desc) {
         String urlpict = desc.substring(desc.indexOf("https"));

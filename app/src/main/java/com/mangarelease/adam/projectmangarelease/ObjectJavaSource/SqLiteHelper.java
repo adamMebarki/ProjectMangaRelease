@@ -23,7 +23,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     private static final String LOG = "DatabaseHelper";
 
     // Database Version
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     // Database Name
     private static final String DATABASE_NAME = "MangaReleases";
@@ -48,6 +48,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_TOME_PICTURE = "tome_picture";
     private static final String KEY_TOME_DESC = "tome_desc";
     private static final String KEY_TOME_NUM = "tome_numero";
+    private static final String KEY_TOME_BUY = "tome_buy";
     private static final String KEY_TOME_MANGA_ID_FK = "manga_id";
 
     // AUTHORS Table - column names
@@ -71,7 +72,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_TOME = "CREATE TABLE " +
             TABLE_TOME + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             KEY_TOME_NUM + " TEXT," + KEY_TOME_DESC + " TEXT, " +
-            KEY_TOME_PICTURE + " TEXT, " + KEY_TOME_MANGA_ID_FK + " INTEGER" + ")";
+            KEY_TOME_PICTURE + " TEXT, " + KEY_TOME_BUY + " INTEGER, " + KEY_TOME_MANGA_ID_FK + " INTEGER" + ")";
 
     private static final String CREATE_TABLE_AUTHOR = "CREATE TABLE " +
             TABLE_AUTHOR + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -272,6 +273,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             values.put(KEY_TOME_DESC, tome.getDesc());
             values.put(KEY_TOME_NUM, tome.getNum_vol());
             values.put(KEY_TOME_MANGA_ID_FK, manga_id);
+            values.put(KEY_TOME_BUY, 0);
             long tome_id = db.insert(TABLE_TOME, null, values);
             return tome_id;
         }
@@ -301,6 +303,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             tm.setImage(c.getString(c.getColumnIndex(KEY_TOME_PICTURE)));
             tm.setDesc(c.getString(c.getColumnIndex(KEY_TOME_DESC)));
             tm.setNum_vol(c.getString(c.getColumnIndex(KEY_TOME_NUM)));
+            tm.setIsBuy(c.getInt(c.getColumnIndex(KEY_TOME_BUY)));
             return tm;
         } else {
             return tm;
@@ -327,6 +330,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
                 tm.setImage(c.getString(c.getColumnIndex(KEY_TOME_PICTURE)));
                 tm.setDesc(c.getString(c.getColumnIndex(KEY_TOME_DESC)));
                 tm.setNum_vol(c.getString(c.getColumnIndex(KEY_TOME_NUM)));
+                tm.setIsBuy(c.getInt(c.getColumnIndex(KEY_TOME_BUY)));
                 tomes.add(tm);
             } while (c.moveToNext());
 
@@ -348,6 +352,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_TOME_DESC, tm.getDesc());
         values.put(KEY_TOME_NUM, tm.getNum_vol());
         values.put(KEY_TOME_MANGA_ID_FK, tm.getManga_id());
+        values.put(KEY_TOME_BUY, tm.getIsBuy());
         return db.update(TABLE_TOME, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(tm.getTome_id())});
     }
@@ -363,7 +368,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(tome_id)});
     }
 
-    public void deleteAllTomes(long manga_id){
+    public void deleteAllTomes(long manga_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TOME, KEY_TOME_MANGA_ID_FK + "= ?",
                 new String[]{String.valueOf(manga_id)});
@@ -387,7 +392,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return 0;
     }
 
-    public String getAuthor(long author_id){
+    public String getAuthor(long author_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String selectQuery = "SELECT " + KEY_AUTHOR_NAME + " FROM " + TABLE_AUTHOR +
@@ -492,7 +497,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean AuthorExists(String name){
+    public boolean AuthorExists(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_AUTHOR_NAME};
         String selection = KEY_AUTHOR_NAME + " =?";
@@ -522,6 +527,33 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         }
         c.close();
         return 0;
+    }
+
+    public boolean isBuy(String num) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT " + KEY_TOME_BUY + " FROM " + TABLE_TOME +
+                " WHERE " + KEY_TOME_NUM + " LIKE " + "'" + num + "'";
+        Cursor c = db.rawQuery(selectQuery, null);
+        if (c.getCount() > 0) {
+            c.moveToNext();
+            int buy = c.getInt(c.getColumnIndex(KEY_TOME_BUY));
+            c.close();
+            if (buy == 1)
+                return true;
+            else
+                return false;
+        }
+        return false;
+    }
+
+
+    public int updateBuy(int isbuy, String num_vol) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_TOME_BUY, isbuy);
+        return db.update(TABLE_TOME, values, KEY_TOME_NUM + " = ?",
+                new String[]{String.valueOf(num_vol)});
     }
 
     // closing database

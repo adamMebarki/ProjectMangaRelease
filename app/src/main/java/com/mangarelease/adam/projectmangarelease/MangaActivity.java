@@ -37,9 +37,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
     private MangaClass manga;
     private SqLiteHelper db;
     private TableLayout table;
-    private TableRow row;
     private static Float scale;
-    private View.OnClickListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,21 +142,29 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         for (int i = 0; i < manga.getVolumes().size(); i++) {
             but = new Button(this);
             but.setId(i);
-            but.setTag("GREY");
-            but.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_normal));
             but.setGravity(Gravity.CENTER_HORIZONTAL);
             but.setText(manga.getVolumes().get(i).getNum_vol());
             but.setLayoutParams(p);
-            but.setTag(manga.getVolumes().get(i).getNum_vol());
+            if (db.getInstance(getApplicationContext()).isBuy((String) but.getText())) {
+                but.setTag("GREEN");
+                but.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_clicked));
+            } else {
+                but.setTag("GREY");
+                but.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_normal));
+            }
+
             but.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Button b = (Button) v;
                     if (v.getTag().toString().compareTo("GREEN") != 0) {
                         v.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_clicked));
                         v.setTag("GREEN");
+                        db.getInstance(getApplicationContext()).updateBuy(1, (String) b.getText());
                     } else {
                         v.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_normal));
                         v.setTag("GREY");
+                        db.getInstance(getApplicationContext()).updateBuy(0, (String) b.getText());
                     }
                 }
             });
@@ -168,7 +174,6 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                     Context context = getApplicationContext();
                     CharSequence text = "Hello toast!";
                     int duration = Toast.LENGTH_SHORT;
-
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                     return true;

@@ -12,7 +12,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adam on 23/03/2017.
@@ -20,11 +22,20 @@ import java.util.List;
 
 public class ParserClass extends AsyncTask<String, Void, Void> {
 
-
+    private HashMap<String, String> tabUrl;
     private List<TomeClass> tomesReleases = new ArrayList<>();
     private String text;
     public volatile boolean parsingComplete = true;
     private boolean finished;
+
+
+    public ParserClass() {
+        tabUrl = new HashMap<>();
+        tabUrl.put("Shojo", "https://www.kurokawa.fr/rss-subscribe/books-shojo/rss.xml");
+        tabUrl.put("Seinen", "https://www.kurokawa.fr/rss-subscribe/books-seinen/rss.xml");
+        tabUrl.put("Shonen  ", "https://www.kurokawa.fr/rss-subscribe/books-shonen/rss.xml");
+        tabUrl.put("Humour", "https://www.kurokawa.fr/rss-subscribe/books-humour/rss.xml");
+    }
 
     @Override
     protected void onPostExecute(Void result) {
@@ -51,31 +62,35 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
 
     public void fetchHTML(String urlString) throws IOException, XmlPullParserException {
 
+        for (Map.Entry<String, String> entry : tabUrl.entrySet()) {
+            String cle = entry.getKey();
+            String valeur = entry.getValue();
+            // traitements
+            URL url = new URL(valeur);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        URL url = new URL("https://www.kurokawa.fr/rss-subscribe/books-seinen/rss.xml");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
 
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            InputStream stream = conn.getInputStream();
 
-        // Starts the query
-        conn.connect();
-        InputStream stream = conn.getInputStream();
+            XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
+            XmlPullParser myparser = xmlFactoryObject.newPullParser();
+            myparser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            myparser.setInput(stream, null);
 
-        XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
-        XmlPullParser myparser = xmlFactoryObject.newPullParser();
-        myparser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-        myparser.setInput(stream, null);
-
-        parseXML(myparser);
-        stream.close();
-        conn.disconnect();
+            parseXML(myparser,cle);
+            stream.close();
+            conn.disconnect();
+        }
     }
 
 
-    public void parseXML(XmlPullParser myParser) {
+    public void parseXML(XmlPullParser myParser,String category) {
 
         int event;
         String title = "";
@@ -98,7 +113,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
                         } else if (tagname.equalsIgnoreCase("description")) {
                             desc = text;
                         } else if (tagname.equalsIgnoreCase("item")) {
-                            tome = new TomeClass(title, desc, "Seinen");
+                            tome = new TomeClass(title, desc, category);
                             tomesReleases.add(tome);
                         }
                         break;
