@@ -68,6 +68,16 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    public void setArrayFragment(ArrayList<TomeClass> tmp){
+        this.array.clear();
+        this.array.addAll(tmp);
+        mpa = new ScreenSlidePagerAdapter(this.getChildFragmentManager(), array);
+        mp.setAdapter(mpa);
+        PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mpa);
+        mp.setAdapter(wrappedAdapter);
+       // pageListener = new PageListener(mp, array, favBut, getContext());
+
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -166,6 +176,8 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         public int getCurrentPage() {
             return mypager.getCurrentItem();
         }
+
+
 
 
     }

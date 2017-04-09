@@ -26,9 +26,15 @@ public class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
     }
 
 
+    public void setArrayScreenSlide(ArrayList<TomeClass> array)
+    {
+        arraySSPA.clear();
+        arraySSPA.addAll(array);
+    }
+
+
     @Override
     public int getCount() {
-
         return arraySSPA.size();
     }
 }
