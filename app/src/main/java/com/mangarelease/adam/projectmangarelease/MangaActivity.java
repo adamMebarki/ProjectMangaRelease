@@ -8,10 +8,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -51,8 +55,8 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         String text = getIntent().getStringExtra("title");
         title.setText(text);
         manga = db.getInstance(getApplicationContext()).getManga(text);
-        if(manga == null)
-            Log.d("YES","YES  " + text);
+        if (manga == null)
+            Log.d("YES", "YES  " + text);
         String author_name = db.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
         manga.setAuthor_name(author_name);
         manga.setVolumes((ArrayList<TomeClass>) db.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));
@@ -142,6 +146,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
         row.setPadding(0, 20, 20, 0);
         for (int i = 0; i < manga.getVolumes().size(); i++) {
+            final String pict = manga.getVolumes().get(i).getImage();
             but = new Button(this);
             but.setId(i);
             but.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -170,14 +175,37 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                     }
                 }
             });
+            final Button finalBut = but;
             but.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
+                    table.setVisibility(View.INVISIBLE);
                     Context context = getApplicationContext();
                     CharSequence text = "Hello toast!";
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
+                    LayoutInflater layoutInflater
+                            = (LayoutInflater) getBaseContext()
+                            .getSystemService(LAYOUT_INFLATER_SERVICE);
+                    View popupView = layoutInflater.inflate(R.layout.popup_tome_manga, null);
+                    final PopupWindow popupWindow = new PopupWindow(
+                            popupView,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    Button btnDismiss = (Button) popupView.findViewById(R.id.dismiss);
+                    WebView web = (WebView) popupView.findViewById(R.id.popup_wb);
+                    web.loadUrl(pict);
+                    btnDismiss.setOnClickListener(new Button.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            table.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    popupWindow.showAtLocation(popupView,Gravity.CENTER,0,0);
+                    //popupWindow.showAsDropDown(finalBut, 50, -30);
                     return true;
                 }
             });
