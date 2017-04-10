@@ -3,12 +3,15 @@ package com.mangarelease.adam.projectmangarelease;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
@@ -25,6 +28,7 @@ import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.TomeClass;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class ReleaseActivity extends AppCompatActivity implements View.OnClickListener, ExpandableListView.OnChildClickListener {
@@ -48,7 +52,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
     /* Declaration of the content of the releasePart the parser and the fragment which will content the webview*/
     private ParserClass pars;
-    private ReleaseFragment fragment;
+    private Fragment fragment;
     private FragmentTransaction ft;
     private FragmentManager fm;
 
@@ -157,19 +161,20 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
             this.toggleMenu(v);
             ArrayList<TomeClass> filterAr = filterArray((ArrayList<TomeClass>) pars.getTomes(), listAdapter.stateCategory, listAdapter.stateManga);
             //fm = ReleaseActivity.this.getSupportFragmentManager();
-            ft = fm.beginTransaction();
-            //fragment = new ReleaseFragment((ArrayList<TomeClass>) filterAr);
-            //fragment.setArrayFragment(filterAr);
-            fragment = new ReleaseFragment(filterAr);
-            ft.replace(R.id.release_fragment_content, fragment);
-            ft.commit();
-            Log.d("Array Filter : ", "**********************************************************************");
-            for (int i = 0; i < filterAr.size(); i++) {
-                Log.d("Array Filter : ", filterAr.get(i).getTitleManga());
-                Log.d("Array Filter : ", filterAr.get(i).getNum_vol());
-                Log.d("Array Filter : ", filterAr.get(i).getCategory());
+            if(!filterAr.isEmpty()) {
+                ft = fm.beginTransaction();
+                fragment = new ReleaseFragment(filterAr);
+                ft.replace(R.id.release_fragment_content, fragment);
+                ft.commit();
+                Log.d("Array Filter : ", "**********************************************************************");
+            }else{
+                ft = fm.beginTransaction();
+                fragment = new EmptyFragment();
+                ft.replace(R.id.release_fragment_content, fragment);
+                ft.commit();
+                Log.d("Array Filter : ", "**********************************************************************");
             }
-        }
+            }
 
         if (v.getId() == butMenu.getId()) {
             this.toggleMenu(v);
@@ -225,25 +230,46 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
         if (tabCategory[0] == 0) { //Shonen
-                /*for(int i=0;i<filterArray.size();i++){
-                    if(filterArray.get(i).getCategory().compareTo("Shonen")==0)
-                    {
-                            filterArray.remove(filterArray.get(i));
-                    }
-                }*/
+            Log.d("Shonen","Shonen");
+            Iterator<TomeClass> iter = filterArray.iterator();
+            while (iter.hasNext()) {
+                TomeClass tome = iter.next();
+                if (tome.getCategory().compareTo("Shonen")==0) {
+                    Log.d("Tome Shonen","title" + tome.getTitleManga());
+                    iter.remove();
+                }
+            }
         }
-        if (tabCategory[1] == 1) { // Shojo
-
+        if (tabCategory[1] == 0) { // Shojo
+            Iterator<TomeClass> iter = filterArray.iterator();
+            while (iter.hasNext()) {
+                TomeClass tome = iter.next();
+                if (tome.getCategory().compareTo("Shojo")==0) {
+                    Log.d("Shojo",tome.getTitleManga());
+                    iter.remove();
+                }
+            }
         }
-        if (tabCategory[2] == 1) { // Seinen
-
+        if (tabCategory[2] == 0) { // Seinen
+            Iterator<TomeClass> iter = filterArray.iterator();
+            while (iter.hasNext()) {
+                TomeClass tome = iter.next();
+                if (tome.getCategory().compareTo("Seinen")==0) {
+                    Log.d("Seinen",tome.getTitleManga());
+                    iter.remove();
+                }
+            }
         }
-        if (tabCategory[3] == 1) { // Humour
-
+        if (tabCategory[3] == 0) { // Humour
+            Iterator<TomeClass> iter = filterArray.iterator();
+            while (iter.hasNext()) {
+                TomeClass tome = iter.next();
+                if (tome.getCategory().compareTo("Humour")==0) {
+                    Log.d("Humour",tome.getTitleManga());
+                    iter.remove();
+                }
+            }
         }
-
-        // second category
-
         return filterArray;
     }
 
@@ -274,5 +300,26 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
             cb.setChecked(true);
         }
         return true;
+    }
+}
+
+
+class EmptyFragment extends Fragment implements View.OnClickListener {
+    private Button retBut;
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_release_empty, null);
+        retBut = (Button) view.findViewById(R.id.returnButRel);
+        retBut.setOnClickListener(this); // FavoriteBut instanciation
+        return view;
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == retBut.getId()) {
+            getActivity().finish();
+        }
     }
 }

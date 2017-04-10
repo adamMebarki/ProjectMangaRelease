@@ -33,7 +33,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
         tabUrl = new HashMap<>();
         tabUrl.put("Shojo", "https://www.kurokawa.fr/rss-subscribe/books-shojo/rss.xml");
         tabUrl.put("Seinen", "https://www.kurokawa.fr/rss-subscribe/books-seinen/rss.xml");
-        tabUrl.put("Shonen  ", "https://www.kurokawa.fr/rss-subscribe/books-shonen/rss.xml");
+        tabUrl.put("Shonen", "https://www.kurokawa.fr/rss-subscribe/books-shonen/rss.xml");
         tabUrl.put("Humour", "https://www.kurokawa.fr/rss-subscribe/books-humour/rss.xml");
     }
 

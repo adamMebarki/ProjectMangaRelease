@@ -68,14 +68,14 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void setArrayFragment(ArrayList<TomeClass> tmp){
+    public void setArrayFragment(ArrayList<TomeClass> tmp) {
         this.array.clear();
         this.array.addAll(tmp);
         mpa = new ScreenSlidePagerAdapter(this.getChildFragmentManager(), array);
         mp.setAdapter(mpa);
         PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mpa);
         mp.setAdapter(wrappedAdapter);
-       // pageListener = new PageListener(mp, array, favBut, getContext());
+        // pageListener = new PageListener(mp, array, favBut, getContext());
 
     }
 
@@ -178,7 +178,7 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         }
 
 
-
-
     }
+
+
 }
