@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
@@ -25,13 +24,14 @@ import java.util.ArrayList;
 
 /**
  * Created by Adam on 06/03/2017.
+ * Class ReleaseFragment : Contains the main content of the ReleaseActivity : The New Releases of manga retrieve from
+ * the parsage and manage to show in a appropriate form on the phone.
+ *
  */
-// Contains  content of new release
 
 
 public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
-    private TextView tv;
     private ViewPager mp;
     private PagerAdapter mpa;
     private ArrayList<TomeClass> array;
@@ -40,6 +40,10 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
     private ImageButton favBut;
     private PageListener pageListener;
 
+    /**
+     *
+     * @param ar : ArrayList which contains the list of the new tomes retrieve from the parsage
+     */
     public ReleaseFragment(ArrayList<TomeClass> ar) {
         array = ar;
     }
@@ -50,17 +54,26 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_release, null);
 
+        // Return and Favorite Buttons instanciation
         retBut = (Button) view.findViewById(R.id.returnButRel);
-        retBut.setOnClickListener(this); // FavoriteBut instanciation
+        retBut.setOnClickListener(this);
         favBut = (ImageButton) view.findViewById(R.id.favButRel);
         favBut.setOnClickListener(this);
         favBut.setTag(R.drawable.greystar);
+
+        // Instanciation of the ViewPage which show one tome, one by one when user will slide the screen.
         mp = (ViewPager) view.findViewById(R.id.pager);
         mp.setPageTransformer(true, new DepthPageTransformer());
+        // Use of the modify Adapter which use the ScreenSlidePageFragment :
+        // The Goal is to use our own Slide and Manage the position of elements like we want
+        // More Information : https://developer.android.com/training/animation/screen-slide.html
         mpa = new ScreenSlidePagerAdapter(this.getChildFragmentManager(), array);
         mp.setAdapter(mpa);
+        // Use of an InfinitePagerAdapter : purpose : loop on the tomes when the user slide. No End and No Begin
+        // More Information : https://android-arsenal.com/details/1/1307#!package
         PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mpa);
         mp.setAdapter(wrappedAdapter);
+        // Use of a PageListener to know which page is the current page for the Favorite Management
         pageListener = new PageListener(mp, array, favBut, getContext());
         pageListener.onPageSelected(0);
         mp.addOnPageChangeListener(pageListener);
@@ -68,47 +81,41 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void setArrayFragment(ArrayList<TomeClass> tmp) {
-        this.array.clear();
-        this.array.addAll(tmp);
-        mpa = new ScreenSlidePagerAdapter(this.getChildFragmentManager(), array);
-        mp.setAdapter(mpa);
-        PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mpa);
-        mp.setAdapter(wrappedAdapter);
-        // pageListener = new PageListener(mp, array, favBut, getContext());
-
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View v) {
+        // Return to the Menu Screen
         if (v.getId() == retBut.getId()) {
             getActivity().finish();
         }
-        // if manga already exist change the status of followed.
-        // if manga do not exist create new manga and add in the favorite liste
-        if (v.getId() == favBut.getId()) {
 
+        // Click on the favorite Button :
+        // if manga already exist in the db, it changes the status of followed : true or false
+        // if manga do not exist in the create new manga and add in the favorite list and followed it automatically
+        if (v.getId() == favBut.getId()) {
             MangaClass mg = new MangaClass();
             mg.setTitle(array.get(pageListener.getCurrentPage()).getTitleManga());
             mg.setCategory(array.get(pageListener.getCurrentPage()).getCategory());
-            mg.setEditor_name("Kurokawa");
+            mg.setEditor_name("Kurokawa"); // Because there is only one Publisher for the moment
             int id = (int) db.getInstance(getContext()).createManga(mg);
             // New manga created -> add to the favorite list
             if (id != 0) {
                 db.getInstance(getContext()).createFavorite(id, 1);
-                this.AddTomeOfFavoriteManga(mg, id);
+                this.AddTomeOfFavoriteManga(mg, id); // Add others tomes too, if there are also retrieve from the parsage.
 
             } else { // manga already exist -> stop following or restart the following
                 int tmp = db.getInstance(getContext()).getManga_id(mg.getTitle());
-                if (db.getInstance(getContext()).isFollow(tmp) == 0) { // manga is not followed
+                if (db.getInstance(getContext()).isFollow(tmp) == 0) { // manga was not followed
+                    // followed now and add the others tomes if there are.
                     db.getInstance(getContext()).updateFavorite(tmp, 1);
                     this.AddTomeOfFavoriteManga(mg, id);
-                } else { // manga is followed
+                } else { // manga was followed
+                    // stop the following of the manga
                     db.getInstance(getContext()).updateFavorite(tmp, 0);
                 }
             }
-
+            // Change the drawable of the star Grey or Yellow
             if ((Integer) v.getTag() == R.drawable.greystar) {
                 favBut.setBackgroundResource(R.drawable.yellowstar);
                 favBut.setTag(R.drawable.yellowstar);
@@ -121,6 +128,7 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
 
     // Create new Favorite add the current tome chosen and others if in the parseList
+    // Same principle as the method AddTomeFavorite() of the ReleaseActivity
     private void AddTomeOfFavoriteManga(MangaClass mg, int id) {
         for (int i = 0; i < array.size(); i++) {
             if (array.get(i).getTitleManga().compareTo(mg.getTitle()) == 0) {
@@ -137,7 +145,7 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
 
     /**
-     * Inner class Detect if the manga of the new release are favorite or note
+     * Inner class Detect if the manga of the new release list are favorite/followed or not
      */
     private static class PageListener extends ViewPager.SimpleOnPageChangeListener {
         private static int currentPage;
@@ -161,8 +169,6 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
             currentPage = mypager.getCurrentItem();
             int id = db.getInstance(context).getManga_id(arrayView.get(currentPage).getTitleManga());
             int isFollow = db.getInstance(context).isFollow(id);
-            Log.d("Page Adapter", arrayView.get(currentPage).getTitleManga());
-            Log.d("Page Adapter", "" + isFollow);
             if (isFollow == 1) {
                 favb.setBackgroundResource(R.drawable.yellowstar);
                 favb.setTag(R.drawable.yellowstar);

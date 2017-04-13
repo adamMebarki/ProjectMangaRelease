@@ -13,6 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.Scroller;
 import android.widget.Toast;
 
+/**
+ * Class use to create a SlideMenu  on the Left of an Activity. Use Like a Layout.
+ * More Information : http://www.devexchanges.info/2016/05/creating-your-own-sliding-menu-like.html
+ * Author of the Code : Hồng Thái
+ * No Need to go further more on this.
+ */
 public class SlidingLayout extends LinearLayout {
 
     // Duration of sliding animation, in miliseconds

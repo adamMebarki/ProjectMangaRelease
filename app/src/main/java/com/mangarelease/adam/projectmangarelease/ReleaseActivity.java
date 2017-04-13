@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.ContentReleaseSource.ReleaseFragment;
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource.ExpandableListAdapter;
@@ -39,16 +38,15 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
     /* Declaration Menu Filter Search variables */
     private Toolbar toolbar;
-    private ImageView butMenu; // Menu button
-    private Button val;
+    private ImageView butMenu; // Menu button on the top left of the screen
+    private Button val; // button to validate the filter.
+
     /* Declaration Expendable component **/
     private ExpandableListAdapter listAdapter;
     private ExpandableListView expandableList;
-    List<String> listDataHeader;
+    List<String> listDataHeader; //
     HashMap<String, List<String>> listDataChild;
-    SqLiteHelper db;
-    /*Temporary */
-    private int NUM_PAGES = 5;
+
 
     /* Declaration of the content of the releasePart the parser and the fragment which will content the webview*/
     private ParserClass pars;
@@ -71,25 +69,29 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         // get the listview
         expandableList = (ExpandableListView) findViewById(R.id.expandableList);
-        // preparing list data
+        // preparing list data of the filter Search
         prepareListData();
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         // setting list adapter
         expandableList.setAdapter(listAdapter);
+        // Listview on child click listener
+        expandableList.setOnChildClickListener(this);
+
         // handling menu button event
         butMenu = (ImageView) findViewById(R.id.menu_icon);
         butMenu.setOnClickListener(this);
         val = (Button) findViewById(R.id.validateButRel);
         val.setOnClickListener(this);
 
-        // Parsager of the webservice and create an arraylist of elements retrieve.
+        // Parsage of the webservice and create an arraylist of elements retrieve.
         pars = new ParserClass();
         pars.execute("");
         while (pars.parsingComplete) ;
 
+
         AddTomeFavorite();
+
         //Instantiate the content of Release Activity
-        NUM_PAGES = pars.getTomes().size();
         // Replace fragment main when activity start
         fm = ReleaseActivity.this.getSupportFragmentManager();
         ft = fm.beginTransaction();
@@ -97,33 +99,26 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         ft.add(R.id.release_fragment_content, fragment);
         ft.commit();
 
-        this.AddTomeFavorite();
-
-
-        // Listview on child click listener
-        expandableList.setOnChildClickListener(this);
-
 
     }
 
 
-    /*
-  * Preparing the list data Temporary
-  */
+    /**
+     * Preparing the list data of the Filter Search
+     */
     private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
 
-        // Adding child data
+        // Adding Child Header data
         listDataHeader.add("Manga");
         listDataHeader.add("Categories");
 
-        // Adding child data
-        List<String> manga = new ArrayList<String>();
+        // Adding Child data
+        List<String> manga = new ArrayList<>();
         manga.add("Favorites");
         manga.add("Others");
-
-        List<String> category = new ArrayList<String>();
+        List<String> category = new ArrayList<>();
         category.add("Shonen");
         category.add("Shojo");
         category.add("Seinen");
@@ -135,7 +130,12 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-
+    /**
+     * Call the toggleMenu method of the slidingLayout variable to close or open the filter Search Menu y clicked on the
+     * Menu Button on the top left of the screen.
+     *
+     * @param v
+     */
     public void toggleMenu(View v) {
         slidingLayout.toggleMenu();
     }
@@ -157,24 +157,26 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        // If user click on the validate button of the filter Search Menu close it and
+        // Run the filter algorithm and replace the fragment by a new with the filter result
         if (v.getId() == val.getId()) {
             this.toggleMenu(v);
+            // call the method to filter the releases with th information of filter provide by the user
             ArrayList<TomeClass> filterAr = filterArray((ArrayList<TomeClass>) pars.getTomes(), listAdapter.stateCategory, listAdapter.stateManga);
-            //fm = ReleaseActivity.this.getSupportFragmentManager();
-            if(!filterAr.isEmpty()) {
+            if (!filterAr.isEmpty()) {
                 ft = fm.beginTransaction();
                 fragment = new ReleaseFragment(filterAr);
                 ft.replace(R.id.release_fragment_content, fragment);
                 ft.commit();
                 Log.d("Array Filter : ", "**********************************************************************");
-            }else{
+            } else { // if no result show an empty fragment
                 ft = fm.beginTransaction();
                 fragment = new EmptyFragment();
                 ft.replace(R.id.release_fragment_content, fragment);
                 ft.commit();
                 Log.d("Array Filter : ", "**********************************************************************");
             }
-            }
+        }
 
         if (v.getId() == butMenu.getId()) {
             this.toggleMenu(v);
@@ -183,17 +185,22 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-
+    /**
+     * When a manga is already in the database and it is checked as a favorite/follow, it will add automatically
+     * the new tomes of this favorite manga in the database. Just after the parsage.
+     */
     public void AddTomeFavorite() {
-
+        SqLiteHelper db = null;
         ArrayList<MangaClass> arrayManga = new ArrayList<>();
         arrayManga.addAll(db.getInstance(this).getAllMangas());
         if (!arrayManga.isEmpty()) {
+            // See all of manga if they are favorite/follow or not
             for (int i = 0; i < arrayManga.size(); i++) {
                 String title = arrayManga.get(i).getTitle();
-                Log.d("Manga Release : ", arrayManga.get(i).getTitle() + "    ");
-                if (db.getInstance(this).isFollow(arrayManga.get(i).getManga_id()) == 1) { // if manga follow add automatically new tomes
+                // if manga is followed, add automatically new tomes retrieve from the parsage
+                if (db.getInstance(this).isFollow(arrayManga.get(i).getManga_id()) == 1) {
                     for (int j = 0; j < pars.getTomes().size(); j++) {
+                        // If title of the manga from the tome is the same, create the tome in the database.
                         if (pars.getTomes().get(j).getTitleManga().compareTo(title) == 0) {
                             TomeClass tome = new TomeClass();
                             tome.setNum_vol(pars.getTomes().get(j).getNum_vol());
@@ -209,63 +216,65 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-
+    /**
+     * @param array       Contains the new releases retrieve from the parsage and after it contains
+     *                    the list of tome which are filtering by the user to filter again and again
+     * @param tabCategory Contains informations about which checkbox is checked or not for the category section
+     * @param tabManga    Contains informations about which checkbox is checked or not for the Manga section
+     * @return ArrayList<TomeClass> return the new filter ArrayList which will be use by the fragment
+     */
     public ArrayList<TomeClass> filterArray(ArrayList<TomeClass> array, int[] tabCategory, int[] tabManga) {
         ArrayList<TomeClass> filterArray = new ArrayList<>();
         SqLiteHelper db = null;
-        // first manga or favorite
-        // tabManga
-        if (tabManga[0] == 1) {  // favorites checked == true
+
+        if (tabManga[0] == 1) {  // checkbox favorites checked == true
             for (int i = 0; i < array.size(); i++) {
-                if (db.getInstance(getApplicationContext()).getManga_id(array.get(i).getTitleManga()) != 0) { // is favorite
+                if (db.getInstance(getApplicationContext()).getManga_id(array.get(i).getTitleManga()) != 0) { // Manga is favorite
                     filterArray.add(array.get(i));
                 }
             }
         }
-        if (tabManga[1] == 1) { // Others checked == true
+        if (tabManga[1] == 1) { // checkbox Others checked == true
             for (int i = 0; i < array.size(); i++) {
-                if (db.getInstance(getApplicationContext()).getManga_id(array.get(i).getTitleManga()) == 0) { // is not favorite
+                if (db.getInstance(getApplicationContext()).getManga_id(array.get(i).getTitleManga()) == 0) { // Manga is not favorite
                     filterArray.add(array.get(i));
                 }
             }
         }
-        if (tabCategory[0] == 0) { //Shonen
-            Log.d("Shonen","Shonen");
+        // For the four categories if not checkbox are not checked, delete  tomes of the categories unckeck by the user
+        if (tabCategory[0] == 0) { //Shonen checkbox checked == false
+            Log.d("Shonen", "Shonen");
             Iterator<TomeClass> iter = filterArray.iterator();
             while (iter.hasNext()) {
                 TomeClass tome = iter.next();
-                if (tome.getCategory().compareTo("Shonen")==0) {
-                    Log.d("Tome Shonen","title" + tome.getTitleManga());
+                if (tome.getCategory().compareTo("Shonen") == 0) {
                     iter.remove();
                 }
             }
         }
-        if (tabCategory[1] == 0) { // Shojo
+        if (tabCategory[1] == 0) { // Shojo checkbox checked == false
             Iterator<TomeClass> iter = filterArray.iterator();
             while (iter.hasNext()) {
                 TomeClass tome = iter.next();
-                if (tome.getCategory().compareTo("Shojo")==0) {
-                    Log.d("Shojo",tome.getTitleManga());
+                if (tome.getCategory().compareTo("Shojo") == 0) {
                     iter.remove();
                 }
             }
         }
-        if (tabCategory[2] == 0) { // Seinen
+        if (tabCategory[2] == 0) { // Seinen checkbox checked == false
             Iterator<TomeClass> iter = filterArray.iterator();
             while (iter.hasNext()) {
                 TomeClass tome = iter.next();
-                if (tome.getCategory().compareTo("Seinen")==0) {
-                    Log.d("Seinen",tome.getTitleManga());
+                if (tome.getCategory().compareTo("Seinen") == 0) {
                     iter.remove();
                 }
             }
         }
-        if (tabCategory[3] == 0) { // Humour
+        if (tabCategory[3] == 0) { // Humour checkbox checked == false
             Iterator<TomeClass> iter = filterArray.iterator();
             while (iter.hasNext()) {
                 TomeClass tome = iter.next();
-                if (tome.getCategory().compareTo("Humour")==0) {
-                    Log.d("Humour",tome.getTitleManga());
+                if (tome.getCategory().compareTo("Humour") == 0) {
                     iter.remove();
                 }
             }
@@ -275,21 +284,14 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
 
     @Override
+    // Recup the checkbox clicked on the expandableList of the filter Search Menu
+    // Save the state of the checkbox checked == true == 1 || checked == false == 0
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-        Toast.makeText(
-                getApplicationContext(),
-                listDataHeader.get(groupPosition)
-                        + " : "
-                        + listDataChild.get(
-                        listDataHeader.get(groupPosition)).get(
-                        childPosition), Toast.LENGTH_SHORT)
-                .show();
         CheckBox cb = listAdapter.getCheckBox(groupPosition, childPosition, v);
-        Log.d("CheckBox", cb.getText().toString() + childPosition + groupPosition);
         if (cb.isChecked()) {
-            if (groupPosition == 1)
+            if (groupPosition == 1) // Manga Section
                 listAdapter.stateCategory[childPosition] = 0;
-            if (groupPosition == 0)
+            if (groupPosition == 0) // Category Section
                 listAdapter.stateManga[childPosition] = 0;
             cb.setChecked(false);
         } else {
@@ -303,7 +305,10 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
     }
 }
 
-
+/**
+ * Class use when where is no result of the filter make by the user. An empty page will show to replace the
+ * releasefragment and avoid any error.
+ */
 class EmptyFragment extends Fragment implements View.OnClickListener {
     private Button retBut;
 

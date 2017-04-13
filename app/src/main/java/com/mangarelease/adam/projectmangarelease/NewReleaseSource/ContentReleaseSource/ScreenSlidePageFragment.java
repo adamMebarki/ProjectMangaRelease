@@ -14,6 +14,7 @@ import com.mangarelease.adam.projectmangarelease.R;
 
 /**
  * Created by Adam on 12/03/2017.
+ * Class which contains the picture and the resume of the current page/tome of the New Release List
  */
 public class ScreenSlidePageFragment extends Fragment {
 
@@ -37,8 +38,8 @@ public class ScreenSlidePageFragment extends Fragment {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_release_slide_page, container, false);
+        // Use of a WebView to show the picture
         pictView = (WebView) rootView.findViewById(R.id.picture_content);
-       // pictView.getSettings().setJavaScriptEnabled(true);
         String html = "<style>img{height: 80%;max-width: 80%;}</style> <html><head></head><body><center><img src=\"" + image + "\"></center></body></html>";
         pictView.loadUrl("about:blank");
         pictView.loadData(html, "text/html", null);
@@ -51,12 +52,3 @@ public class ScreenSlidePageFragment extends Fragment {
         return rootView;
     }
 }
-
-
-// pictView.setInitialScale(1);
-// pictView.getSettings().setLoadWithOverviewMode(true);
-// pictView.getSettings().setUseWideViewPort(true);
-// pictView.getSettings().setSupportZoom(true);
-// pictView.getSettings().setBuiltInZoomControls(true);
-//String html = "<html><center><body><img src=\"" + image + "\" width=\"50%\" height=\"50%\"\"/></body></html>";
-// String html = "<html><head><style type='text/css'>html,body {margin: 0;padding: 0;width: 100%;height: 100%;}html {display: table;}body {display: table-cell;vertical-align: middle;text-align: center;}</style></head><body><img src=\"" + image + "\" width=\"50%\" height=\"50%\"\"/></body></html>";

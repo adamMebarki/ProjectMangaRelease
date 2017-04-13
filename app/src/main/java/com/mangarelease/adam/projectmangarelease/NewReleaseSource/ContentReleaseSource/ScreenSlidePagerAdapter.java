@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 /**
  * Created by Adam on 12/03/2017.
+ * More Information : https://developer.android.com/training/animation/screen-slide.html
+ * No need to go further more on the class
  */
 
 public class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
@@ -24,14 +26,6 @@ public class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         return new ScreenSlidePageFragment(arraySSPA.get(position));
     }
-
-
-    public void setArrayScreenSlide(ArrayList<TomeClass> array)
-    {
-        arraySSPA.clear();
-        arraySSPA.addAll(array);
-    }
-
 
     @Override
     public int getCount() {

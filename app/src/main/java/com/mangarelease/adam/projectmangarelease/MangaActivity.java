@@ -1,6 +1,7 @@
 package com.mangarelease.adam.projectmangarelease;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -195,7 +196,11 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                             LinearLayout.LayoutParams.WRAP_CONTENT);
                     Button btnDismiss = (Button) popupView.findViewById(R.id.dismiss);
                     WebView web = (WebView) popupView.findViewById(R.id.popup_wb);
-                    web.loadUrl(pict);
+                    String html = "<style>img{height: 80%;max-width: 80%;}</style> <html><head></head><body><center><img src=\"" + pict + "\"></center></body></html>";
+                    web.loadUrl("about:blank");
+                    web.loadData(html, "text/html", null);
+                    web.getSettings();
+                    web.setBackgroundColor(Color.GREEN);
                     btnDismiss.setOnClickListener(new Button.OnClickListener() {
 
                         @Override
@@ -204,7 +209,8 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                             table.setVisibility(View.VISIBLE);
                         }
                     });
-                    popupWindow.showAtLocation(popupView,Gravity.CENTER,0,0);
+                    popupWindow.showAtLocation(popupView,Gravity.CENTER_HORIZONTAL,0,-150);
+
                     //popupWindow.showAsDropDown(finalBut, 50, -30);
                     return true;
                 }

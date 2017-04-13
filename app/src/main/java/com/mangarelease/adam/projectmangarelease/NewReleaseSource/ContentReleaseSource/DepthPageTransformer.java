@@ -6,6 +6,8 @@ import android.view.View;
 
 /**
  * Created by 1606149 on 03/03/2017.
+ * Class use to make an effect when user slide a view pager No need to go further on this
+ * See the url : https://developer.android.com/training/animation/screen-slide.html
  */
 
 public class DepthPageTransformer implements ViewPager.PageTransformer {

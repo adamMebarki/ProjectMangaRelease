@@ -18,16 +18,16 @@ import java.util.List;
 
 /**
  * Created by Adam on 04/03/2017.
+ * Define all of the interaction possible in the filter list of the Filter Search Menu
  */
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context ctxt;
-    public int[] stateManga; // [0] -> Favorites [1] -> Others
-    public int[] stateCategory; // [0] -> Shonen [1] -> Shojo [2] -> Seinen [3] -> Humour
+    public int[] stateManga; // [0] -> Favorites [1] -> Others   : State of checkbox of the first Section
+    public int[] stateCategory; // [0] -> Shonen [1] -> Shojo [2] -> Seinen [3] -> Humour  : State of checkbox of the Second Section
     private List<String> listDataHeader; // header titles
-    //child data in format of header title, child title
-    private HashMap<String, List<String>> listDataChild;
+    private HashMap<String, List<String>> listDataChild; // child titles
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<String>> listChildData) {
@@ -36,6 +36,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this.listDataHeader = listDataHeader;
         this.listDataChild = listChildData;
         stateManga = new int[2];
+        // By Default all Checkbox are checked == true
         for (int i = 0; i < stateManga.length; i++)
             stateManga[i] = 1;
         stateCategory = new int[4];
@@ -88,6 +89,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+
+
+    // Modify Method
     @Override
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView,
@@ -102,8 +106,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         CheckBox txtListChild = (CheckBox) convertView
                 .findViewById(R.id.checkboxChoice);
         txtListChild.setText(childText);
-        Log.d("Group",groupPosition+"");
         txtListChild.setTag(groupPosition);
+        // Verify if the child checkbox is checked or not with the tab and apply the change on the checkbox
+        //  Depend on the group position and child position. Avoid outofBound Error
         if (groupPosition == 0) {
             if (stateManga[childPosition] == 1)
                 txtListChild.setChecked(true);
@@ -120,6 +125,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    // Modify Method
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
@@ -129,7 +135,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_group_filter_release, null);
         }
-
+        // Get the header title and add its position in the tag.
         TextView headTitleFilter = (TextView) convertView
                 .findViewById(R.id.headTitleFilter);
         headTitleFilter.setTypeface(null, Typeface.BOLD);
@@ -139,6 +145,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
 
+    /**
+     *
+     * @param groupPosition position of the group where the checkbox is
+     * @param childPosition position inside the group where the checkbox is
+     * @param convertView
+     * @return the checkbox selected for futher use
+     */
     public CheckBox getCheckBox(int groupPosition, int childPosition, View convertView) {
         final String childText = (String) getChild(groupPosition, childPosition);
         if (convertView == null) {

@@ -22,24 +22,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //instanciation of the three buttons of the main Activity
         quitBut = (Button) findViewById(R.id.quitButMain);
         releaseBut = (Button) findViewById(R.id.releaseButMain);
         libraryBut = (Button) findViewById(R.id.libraryButMain);
         quitBut.setOnClickListener(this);
         releaseBut.setOnClickListener(this);
         libraryBut.setOnClickListener(this);
+        // Create the instance of the db which will be share in the whole project
         db.getInstance(getApplicationContext());
-        fav.getInstance();
+        // If no create, will create the row for this. It will be the row by default for every new favorite
+        // if the author is not specified.
         db.getInstance(getApplicationContext()).createAuthor("No Specify");
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View v) {
-        if (v.getId() == releaseBut.getId()) {
+        if (v.getId() == releaseBut.getId()) { // open the release activity with the new releases of manga
             Intent in = new Intent(this, ReleaseActivity.class);
             startActivity(in);
-        } else if (v.getId() == libraryBut.getId()) {
+        } else if (v.getId() == libraryBut.getId()) { // open the library activity to manage the favorites manga
             Intent in = new Intent(this, LibraryActivity.class);
             startActivity(in);
         } else {
