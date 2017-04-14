@@ -86,10 +86,10 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         // Parsage of the webservice and create an arraylist of elements retrieve.
         pars = new ParserClass();
         pars.execute("");
-        while (pars.parsingComplete) ;
+        while(pars.parsingComplete);
 
 
-        AddTomeFavorite();
+
 
         //Instantiate the content of Release Activity
         // Replace fragment main when activity start
@@ -98,8 +98,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         fragment = new ReleaseFragment((ArrayList<TomeClass>) pars.getTomes());
         ft.add(R.id.release_fragment_content, fragment);
         ft.commit();
-
-
+        AddTomeFavorite();
     }
 
 
@@ -199,6 +198,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
                 String title = arrayManga.get(i).getTitle();
                 // if manga is followed, add automatically new tomes retrieve from the parsage
                 if (db.getInstance(this).isFollow(arrayManga.get(i).getManga_id()) == 1) {
+                    Log.d("Manga TITLE FOLLOWED :", title);
                     for (int j = 0; j < pars.getTomes().size(); j++) {
                         // If title of the manga from the tome is the same, create the tome in the database.
                         if (pars.getTomes().get(j).getTitleManga().compareTo(title) == 0) {

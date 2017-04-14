@@ -38,7 +38,7 @@ public class ScreenSlidePageFragment extends Fragment {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_release_slide_page, container, false);
-        // Use of a WebView to show the picture
+
         pictView = (WebView) rootView.findViewById(R.id.picture_content);
         String html = "<style>img{height: 80%;max-width: 80%;}</style> <html><head></head><body><center><img src=\"" + image + "\"></center></body></html>";
         pictView.loadUrl("about:blank");

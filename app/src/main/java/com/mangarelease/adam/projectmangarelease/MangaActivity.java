@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,7 +21,6 @@ import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
@@ -31,6 +31,7 @@ import java.util.Collections;
 
 /**
  * Created by Adam on 15/03/2017.
+ * Need to add the edittext interaction
  */
 
 public class MangaActivity extends AppCompatActivity implements View.OnClickListener {
@@ -46,6 +47,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
         title = (TextView) findViewById(R.id.mangaTitle);
@@ -53,18 +55,18 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         editBut = (ImageButton) findViewById(R.id.editBut);
         cancelBut = (Button) findViewById(R.id.cancelEditBut);
         valBut = (Button) findViewById(R.id.valEditBut);
+
         String text = getIntent().getStringExtra("title");
         title.setText(text);
         manga = db.getInstance(getApplicationContext()).getManga(text);
-        if (manga == null)
-            Log.d("YES", "YES  " + text);
         String author_name = db.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
         manga.setAuthor_name(author_name);
         manga.setVolumes((ArrayList<TomeClass>) db.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));
-        for (int i = 0; i < manga.getVolumes().size(); i++) {
-            Log.d("Volumes : ", manga.getVolumes().get(i).getNum_vol());
-        }
         Collections.sort(manga.getVolumes());
+        for(int i=0;i<manga.getVolumes().size();i++){
+            Log.d("Tome : ",manga.getVolumes().get(i).getNum_vol());
+        }
+
         okayBut.setOnClickListener(this);
         editBut.setOnClickListener(this);
         cancelBut.setOnClickListener(this);
@@ -130,6 +132,25 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                 text_category.setEnabled(false);
                 text_price.setEnabled(false);
                 // Make change on database
+                manga.setAuthor_name(text_author.getText().toString());
+                manga.setEditor_name(text_editor.getText().toString());
+                manga.setCategory(text_category.getText().toString());
+                Double price = Double.parseDouble(text_price.getText().toString());
+                manga.setPrice(price);
+                String name = text_author.getText().toString();
+                Log.d("Name Author : ", name);
+                if (!db.getInstance(getApplicationContext()).AuthorExists(name)) {
+                    Log.d("Name not in the database", "Yes");
+                    int author_id = (int) db.getInstance(getApplicationContext()).createAuthor(name);
+                    manga.setAuthor_id(author_id);
+                    db.getInstance(getApplicationContext()).updateManga(manga);
+                } else {
+                    Log.d("Is in the database", "Yes");
+                    int id = db.getInstance(getApplicationContext()).getAuthor_id(name);
+                    manga.setAuthor_id(id);
+                    db.getInstance(getApplicationContext()).updateManga(manga);
+                }
+
                 break;
             default:
                 break;
@@ -144,10 +165,12 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         android.widget.TableRow.LayoutParams p = new android.widget.TableRow.LayoutParams();
         p.rightMargin = dpToPixel(10, getApplicationContext()); // right-margin = 10dp
         TableRow row = new TableRow(this);
-        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
+        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f));
         row.setPadding(0, 20, 20, 0);
+
         for (int i = 0; i < manga.getVolumes().size(); i++) {
             final String pict = manga.getVolumes().get(i).getImage();
+            final String desc = manga.getVolumes().get(i).getDesc();
             but = new Button(this);
             but.setId(i);
             but.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -176,16 +199,11 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                     }
                 }
             });
-            final Button finalBut = but;
             but.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     table.setVisibility(View.INVISIBLE);
-                    Context context = getApplicationContext();
-                    CharSequence text = "Hello toast!";
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
+                    editBut.setEnabled(false);
                     LayoutInflater layoutInflater
                             = (LayoutInflater) getBaseContext()
                             .getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -196,22 +214,24 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                             LinearLayout.LayoutParams.WRAP_CONTENT);
                     Button btnDismiss = (Button) popupView.findViewById(R.id.dismiss);
                     WebView web = (WebView) popupView.findViewById(R.id.popup_wb);
-                    String html = "<style>img{height: 80%;max-width: 80%;}</style> <html><head></head><body><center><img src=\"" + pict + "\"></center></body></html>";
+                    TextView desc_tome = (TextView) popupView.findViewById(R.id.desc_content_popup);
+                    desc_tome.setText(desc);
+                    desc_tome.setMovementMethod(new ScrollingMovementMethod());
+                    String html = "<style>img{height: 90%;max-width: 100%;}</style> <html><head></head><body><img src=\"" + pict + "\"></body></html>";
                     web.loadUrl("about:blank");
                     web.loadData(html, "text/html", null);
                     web.getSettings();
-                    web.setBackgroundColor(Color.GREEN);
+                    web.setBackgroundColor(Color.TRANSPARENT);
                     btnDismiss.setOnClickListener(new Button.OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
                             popupWindow.dismiss();
                             table.setVisibility(View.VISIBLE);
+                            editBut.setEnabled(true);
                         }
                     });
-                    popupWindow.showAtLocation(popupView,Gravity.CENTER_HORIZONTAL,0,-150);
-
-                    //popupWindow.showAsDropDown(finalBut, 50, -30);
+                    popupWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL, 0, -150);
                     return true;
                 }
             });
@@ -220,7 +240,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                 table.addView(row);
                 row = new TableRow(this);
                 row.setPadding(0, 20, 20, 0);
-                row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
+                row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f));
             }
         }
         table.addView(row);

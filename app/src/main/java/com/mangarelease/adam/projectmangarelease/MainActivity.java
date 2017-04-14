@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // If no create, will create the row for this. It will be the row by default for every new favorite
         // if the author is not specified.
         db.getInstance(getApplicationContext()).createAuthor("No Specify");
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

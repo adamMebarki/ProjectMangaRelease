@@ -1,7 +1,6 @@
 package com.mangarelease.adam.projectmangarelease.ObjectJavaSource;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -24,10 +23,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
 
     private HashMap<String, String> tabUrl;
     private List<TomeClass> tomesReleases = new ArrayList<>();
-    private String text;
     public volatile boolean parsingComplete = true;
-    private boolean finished;
-
 
     public ParserClass() {
         tabUrl = new HashMap<>();
@@ -39,7 +35,6 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-        finished = true;
         parsingComplete = false;
     }
 
@@ -47,12 +42,10 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
         parsingComplete = true;
-        finished = false;
         try {
             fetchHTML(params[0]);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d("Youhou", "Ypouhou");
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         }
@@ -87,6 +80,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
             stream.close();
             conn.disconnect();
         }
+        parsingComplete = false;
     }
 
 
@@ -125,7 +119,6 @@ public class ParserClass extends AsyncTask<String, Void, Void> {
                 }
                 event = myParser.next();
             }
-            parsingComplete = false;
         } catch (Exception e) {
             e.printStackTrace();
         }

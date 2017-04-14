@@ -145,7 +145,7 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
 
     /**
-     * Inner class Detect if the manga of the new release list are favorite/followed or not
+     * Inner class Detect if the manga of the new release list are  or note
      */
     private static class PageListener extends ViewPager.SimpleOnPageChangeListener {
         private static int currentPage;
