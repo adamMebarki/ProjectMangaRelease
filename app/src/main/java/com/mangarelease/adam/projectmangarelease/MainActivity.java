@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.FavoriteArray;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.ParserClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 
@@ -17,7 +16,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button quitBut, releaseBut, libraryBut;
     private SqLiteHelper db;
-    private FavoriteArray fav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == releaseBut.getId()) { // open the release activity with the new releases of manga
-
+            // Start the parsage to recup data in an asynctask class which launch at the end the releaseActivity
             ParserClass pars = new ParserClass(MainActivity.this);
             pars.execute("");
 

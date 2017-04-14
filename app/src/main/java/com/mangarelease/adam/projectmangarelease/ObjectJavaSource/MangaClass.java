@@ -7,21 +7,26 @@ import java.util.ArrayList;
 
 /**
  * Created by Adam on 19/03/2017.
+ * Class contains all of the information of a manga
+ * Use to retrieve and add to the db.
+ * Use to show information on a manga in a list or a activity
  */
 
 public class MangaClass implements Parcelable {
 
 
-    private int manga_id;
-    private String title;
-    private double price;
-    private String editor_name;
-    private String author_name;
-    private int author_id;
-    private String category;
-    private ArrayList<TomeClass> volumes;
+    private int manga_id;  // id of the manga retrieve from the db once it is created
+    private String title;  // title of the manga
+    private double price;  // price 0.0 by default
+    private String editor_name; //  name of the publishers none by default
+    private String author_name; // name of the authors  none by default
+    private int author_id;  // id of the author 1 by default if not provide during the parsage
+    private String category;  // category of the manga
+    private ArrayList<TomeClass> volumes;  // list of the volumes of the manga retrieve from the db
 
-
+    /**
+     * Constructor of MangaClass
+     */
     public MangaClass() {
         this.manga_id=0; //
         this.title="";
@@ -33,7 +38,10 @@ public class MangaClass implements Parcelable {
         volumes = new ArrayList<>();
     }
 
-
+    /**
+     * Use to send the manga throught activity
+     * @param in
+     */
     private MangaClass(Parcel in) {
         this.manga_id = in.readInt();
         this.title = in.readString();
@@ -43,6 +51,37 @@ public class MangaClass implements Parcelable {
         this.author_id = in.readInt();
         this.category = in.readString();
     }
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.manga_id);
+        dest.writeString(this.title);
+        dest.writeDouble(this.price);
+        dest.writeString(this.editor_name);
+        dest.writeString(this.author_name);
+        dest.writeInt(this.author_id);
+        dest.writeString(this.category);
+    }
+
+    public static final Parcelable.Creator<MangaClass> CREATOR = new Parcelable.Creator<MangaClass>() {
+        public MangaClass createFromParcel(Parcel in) {
+            return new MangaClass(in);
+        }
+
+        public MangaClass[] newArray(int size) {
+            return new MangaClass[size];
+
+        }
+    };
+
+    /**
+     * Getter and Setter of all of the variables of MangaClass
+     *
+     */
 
     public int getManga_id() {
         return manga_id;
@@ -109,37 +148,10 @@ public class MangaClass implements Parcelable {
         this.volumes.addAll(volumes);
     }
 
-    public void addVolume(TomeClass tome) {
-        volumes.add(tome);
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.manga_id);
-        dest.writeString(this.title);
-        dest.writeDouble(this.price);
-        dest.writeString(this.editor_name);
-        dest.writeString(this.author_name);
-        dest.writeInt(this.author_id);
-        dest.writeString(this.category);
-    }
 
 
 
-    public static final Parcelable.Creator<MangaClass> CREATOR = new Parcelable.Creator<MangaClass>() {
-        public MangaClass createFromParcel(Parcel in) {
-            return new MangaClass(in);
-        }
 
-        public MangaClass[] newArray(int size) {
-            return new MangaClass[size];
 
-        }
-    };
+
 }

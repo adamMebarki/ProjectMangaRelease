@@ -24,6 +24,10 @@ import java.util.Map;
 
 /**
  * Created by Adam on 23/03/2017.
+ * ParserClass extends Asynctask
+ * Make the connection the the url
+ * and parse the xml get from the url
+ * launch the ReleaseActivity when parsage is done
  */
 
 public class ParserClass extends AsyncTask<String, Void, Void> implements Serializable {
@@ -35,6 +39,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
     private transient Context context;
 
     public ParserClass(Context context) {
+        // prepare list of url to retreive the new releases from them.
         tabUrl = new HashMap<>();
         tabUrl.put("Shojo", "https://www.kurokawa.fr/rss-subscribe/books-shojo/rss.xml");
         tabUrl.put("Seinen", "https://www.kurokawa.fr/rss-subscribe/books-seinen/rss.xml");
@@ -46,16 +51,17 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        // Launch a progressDialog during the processus
         progressDialog = new ProgressDialog(context);
         progressDialog.setTitle("Retrieve new releases from Kurokawa");
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        Log.d("PRE EXECUTE", "PRE EXECUTE");
     }
 
 
     @Override
     protected void onPostExecute(Void result) {
+        // Processus done close progressDialog and launch the ReleaseActivity
         parsingComplete = false;
         progressDialog.dismiss();
         Intent in = new Intent(context, ReleaseActivity.class);
@@ -64,12 +70,12 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
     }
 
 
-
     @Override
     protected Void doInBackground(String... params) {
+        // Call the method to connect to the urls
         parsingComplete = true;
         try {
-            fetchHTML(params[0]);
+            fetchHTML();
         } catch (IOException e) {
             e.printStackTrace();
             Log.d("Error : ", e.getMessage());
@@ -79,8 +85,14 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
         return null;
     }
 
-
-    public void fetchHTML(String urlString) throws IOException, XmlPullParserException {
+    /**
+     * Connect to the urls give by the ParserClass
+     * Retrieve the xml from urls
+     * Launch parsage for every urs given.
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    public void fetchHTML() throws IOException, XmlPullParserException {
 
         for (Map.Entry<String, String> entry : tabUrl.entrySet()) {
             String cle = entry.getKey();
@@ -93,7 +105,6 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
             conn.setConnectTimeout(15000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
-            Log.d("Connection : ", conn.getResponseCode() + "");
             // Starts the query
             conn.connect();
             InputStream stream = conn.getInputStream();
@@ -110,7 +121,12 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
         parsingComplete = false;
     }
 
-
+    /**
+     * Start the processus of parsage and recup information we need from the xml given
+     *
+     * @param myParser
+     * @param category name of the category of tomes retrieved (Shonen,Seinen,...)
+     */
     public void parseXML(XmlPullParser myParser, String category) {
 
         int event;
@@ -131,6 +147,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
                     case XmlPullParser.END_TAG:
                         if (tagname.equalsIgnoreCase("title")) {
                             title = text;
+                            // correct syntax
                             if (title.contains("tome "))
                                 title = title.replaceAll("tome ", "T");
                             if (title.contains("!"))
@@ -139,6 +156,8 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
                         } else if (tagname.equalsIgnoreCase("description")) {
                             desc = text;
                         } else if (tagname.equalsIgnoreCase("item")) {
+                            // add to the important part of the ReleaseActivity. The ArrayList which contains all of the
+                            // new Releases from urls. Use by most every file in Link with ReleaseActivity
                             tome = new TomeClass(title, desc, category);
                             tomesReleases.add(tome);
                         }

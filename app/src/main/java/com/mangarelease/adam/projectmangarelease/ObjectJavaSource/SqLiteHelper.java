@@ -13,6 +13,8 @@ import java.util.List;
 
 /**
  * Created by Adam on 25/03/2017.
+ * Management of the Database of the Application
+ * All Activity and Class share the same instance of the db to avoid any errors.
  */
 
 public class SqLiteHelper extends SQLiteOpenHelper {
@@ -74,10 +76,12 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             KEY_TOME_NUM + " TEXT," + KEY_TOME_DESC + " TEXT, " +
             KEY_TOME_PICTURE + " TEXT, " + KEY_TOME_BUY + " INTEGER, " + KEY_TOME_MANGA_ID_FK + " INTEGER" + ")";
 
+    // Author table create statement
     private static final String CREATE_TABLE_AUTHOR = "CREATE TABLE " +
             TABLE_AUTHOR + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             KEY_AUTHOR_NAME + " TEXT" + ")";
 
+    // Favorite table create statement
     private static final String CREATE_TABLE_FAVORITE = "CREATE TABLE " +
             TABLE_FAVORITE + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_FAVORITE_MANGA_ID_FK + " INTEGER, " + KEY_FAVORITE_FOLLOWED + " INTEGER" + ")";
@@ -105,6 +109,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
 
     @Override
+    /**
+     * Create the table of the db
+     */
     public void onCreate(SQLiteDatabase db) {
         // creating required tables
         db.execSQL(CREATE_TABLE_AUTHOR);
@@ -115,6 +122,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    /**
+     * Upgrade the db
+     */
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_AUTHOR);
@@ -137,12 +147,12 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     /**
      * CREATING A MANGA
      *
-     * @param manga
-     * @return long
+     * @param manga  MangaClass
+     * @return long  id of the row create for the manga
      */
     public long createManga(MangaClass manga) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if (!this.MangaExists(manga.getTitle())) {
+        if (!this.MangaExists(manga.getTitle())) { // if the manga exist do not create return 0 instead of return the id.
             ContentValues values = new ContentValues();
             values.put(KEY_MANGA_TITLE, manga.getTitle());
             values.put(KEY_MANGA_PRICE, manga.getPrice());
@@ -156,10 +166,10 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Getting single manga
+     * Getting single manga with the title
      *
-     * @param titleManga
-     * @return
+     * @param titleManga String
+     * @return MangaClass if found in the db or null if it is not in the db
      */
     public MangaClass getManga(String titleManga) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -185,6 +195,12 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Provide the id of a manga with the title or 0 if not in the db
+     *
+     * @param titleManga String
+     * @return manga_id int
+     */
     public int getManga_id(String titleManga) {
         SQLiteDatabase db = this.getReadableDatabase();
         int manga_id = 0;
@@ -203,9 +219,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Getting all mangas
+     * Getting all mangas from the db
      *
-     * @return
+     * @return List<MangaClass>
      */
     public List<MangaClass> getAllMangas() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -261,16 +277,16 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Search if Manga already in the table
+     * Search if Manga already in the table with the title
      *
-     * @param searchItem
-     * @return
+     * @param titleManga String
+     * @return boolean
      */
-    public boolean MangaExists(String searchItem) {
+    public boolean MangaExists(String titleManga) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_MANGA_TITLE};
         String selection = KEY_MANGA_TITLE + " LIKE?";
-        String[] selectionArgs = {searchItem};
+        String[] selectionArgs = {titleManga};
         String limit = "1";
         Cursor cursor = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
         cursor.moveToFirst();
@@ -281,8 +297,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
     /** get followed to turn star in grey or yellow. favorite or not ? from table favorites
      *
-     * @param id
-     * @return
+     * To know if a manga is follow by the user. The manga can be in the favorite and not be followed.
+     * @param id   int Id of the manga
+     * @return int return the status of the followed columns of the db. 0 or 1 : not follow or follow
      */
     public int isFollow(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -307,9 +324,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     /**
      * Creating a Tome
      *
-     * @param tome
-     * @param manga_id
-     * @return
+     * @param tome  TomeClass params contains the tome to insert in the db
+     * @param manga_id  int id of the manga in which the tome belongs to it.
+     * @return  long  new id of the create row with the given tome.
      */
     public long createTome(TomeClass tome, int manga_id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -411,13 +428,22 @@ public class SqLiteHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(tome_id)});
     }
 
+    /**
+     * Delete all of the tomes belongs to a manga
+     * @param manga_id  id of the manga which be delete too
+     */
     public void deleteAllTomes(long manga_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TOME, KEY_TOME_MANGA_ID_FK + "= ?",
                 new String[]{String.valueOf(manga_id)});
     }
 
-
+    /**
+     * Search a tome of a manga if already in the db
+     * @param num_vol    String number of the tome to find in the db
+     * @param manga_id  int id of the manga in which the tome belongs to it.
+     * @return
+     */
     public boolean TomeExists(String num_vol, int manga_id) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_TOME_NUM};
@@ -430,6 +456,12 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return exists;
     }
 
+    /**
+     * Return true or false if the manga is buy by the user useful for the MangaActivity
+     *
+     * @param num  String numero of the volume
+     * @return boolean
+     */
     public boolean isBuy(String num) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -448,6 +480,12 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    /**
+     *
+     * @param isbuy int  status to insert. If is buy or not
+     * @param num_vol String numero of the tome to update
+     * @return  int
+     */
     public int updateBuy(int isbuy, String num_vol) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -459,10 +497,10 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
 
     /**
-     * Creating an author
+     * Creating an author  with the name
      *
-     * @param author_name
-     * @return
+     * @param author_name  String name of the author
+     * @return long id of the new row create with the name of the author
      */
     public long createAuthor(String author_name) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -475,6 +513,11 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return 0;
     }
 
+    /**
+     * Return the name of the author
+     * @param author_id  long Id of the author
+     * @return  String  Name of the author to retrieve
+     */
     public String getAuthor(long author_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -493,6 +536,11 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     *  Return the id of an author with his name
+     * @param name  String name of the author
+     * @return int  id of the author
+     */
     public int getAuthor_id(String name){
         SQLiteDatabase db = this.getReadableDatabase();
         int author_id = 0;
@@ -510,6 +558,11 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return author_id;
     }
 
+    /**
+     * Return true or false if the author is in the db  with the name
+     * @param name  String name of the author
+     * @return boolean
+     */
     public boolean AuthorExists(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_AUTHOR_NAME};
@@ -523,6 +576,12 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * Create a favorite row for with the id of a manga and the status followed == 1
+     * @param manga_id   int id of the manga which will be follow
+     * @param followed   int
+     * @return
+     */
     public long createFavorite(int manga_id, int followed) {
         SQLiteDatabase db = this.getWritableDatabase();
         if (!this.FavoriteExists(manga_id)) {

@@ -25,6 +25,7 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
+        // instantiation of element of the layout library
         retBut = (Button) findViewById(R.id.returnButLib);
         retBut.setOnClickListener(this);
         valBut = (Button) findViewById(R.id.validateButLib);
@@ -38,13 +39,14 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == retBut.getId()) {
+        if (v.getId() == retBut.getId()) { // return to the MainActivity
             this.finish();
-
-        } else if (v.getId() == valBut.getId()) {
+        } else if (v.getId() == valBut.getId()) { // validate all changement made by the user on the list or return to the Main
+            // Activity id nothing.
             if (adapter.getArrayTrashSelected().isEmpty() && adapter.getArrayFollow().isEmpty() && adapter.getArrayNoFollow().isEmpty()) {
                 this.finish();
             } else {
+                // If changement  open a Dialog to confirm before apply.
                 ConfirmDialog diag = new ConfirmDialog(this, lview, adapter);
                 diag.show(getSupportFragmentManager(), "Test");
             }
@@ -55,9 +57,12 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
+        // Get the X on the list when user touch the screen
+        // Determine also if the user click on a title of a manga by using the impactpoint or just slide the list up or down.
+        //
         if (v.getId() == lview.getId()) {
             int point = lview.pointToPosition((int) event.getX(), (int) event.getY());
-            if (point != -1) {
+            if (point != -1) { // Prevent error by clicking outside the list when the list is short
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         impactPoint = (int) event.getY();
@@ -66,8 +71,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
                         break;
                     case MotionEvent.ACTION_UP:
                         int dif = impactPoint - (int) event.getY();
-                        // Open activity description manga
-                        if (dif == 0) {
+                        // Open Manga Activity
+                        if (dif == 0) { // when user touch and release his finger in the same point == click
                             point = lview.pointToPosition((int) event.getX(), (int) event.getY());
                             Intent in = new Intent(this, MangaActivity.class);
                             in.putExtra("title", (String) adapter.getList().get(point).get(FIRST_COLUMN));

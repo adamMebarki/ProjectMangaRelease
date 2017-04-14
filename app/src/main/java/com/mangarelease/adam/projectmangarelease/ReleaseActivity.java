@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,15 +85,11 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         val = (Button) findViewById(R.id.validateButRel);
         val.setOnClickListener(this);
 
-        // Parsage of the webservice and create an arraylist of elements retrieve.
+        // Recup of the list of new Releases tomes
         Intent i = getIntent();
         tomes = (List<TomeClass>) i.getSerializableExtra("sampleObject");
-        Log.d("TOMES SIZE", tomes.size() + "");
-      /*  pars = new ParserClass(ReleaseActivity.this);
-        pars.execute("");*/
-        // while(pars.parsingComplete);
 
-        //Instantiate the content of Release Activity
+        //Instantiate the content of Release Activity blank or with the list of new tomes
         // Replace fragment main when activity start
         fm = ReleaseActivity.this.getSupportFragmentManager();
         ft = fm.beginTransaction();
@@ -111,7 +106,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         //
         ft.add(R.id.release_fragment_content, fragment);
         ft.commit();
-        //AddTomeFavorite();
+        AddTomeFavorite();
     }
 
 

@@ -2,6 +2,8 @@ package com.mangarelease.adam.projectmangarelease.LibrarySource;
 
 /**
  * Created by Adam on 11/03/2017.
+ * Contains the title of Favorite Mangas, Checkbox to delete or update the following.
+ * Manage the interaction on the list
  */
 
 
@@ -26,21 +28,23 @@ import static com.mangarelease.adam.projectmangarelease.LibrarySource.Constant.T
 
 public class listViewAdapter extends BaseAdapter {
     public ArrayList<HashMap> list;
-    private Activity activity;
+    private Activity activity; // hold the Library Activity
     private ViewHolder holder;
-    private ArrayList arrayTrash;
-    private ArrayList arrayNoFollow;
-    private ArrayList arrayFollow;
+    private ArrayList arrayTrash; // contains the position of manga which will be delete in the list
+    private ArrayList arrayNoFollow; // contains the position of manga which will be not follow after in the list
+    private ArrayList arrayFollow;// contains the position of manga which will be follow after in the list
     private SqLiteHelper db;
     public ArrayList<MangaClass> arrayManga;
-    private ArrayList arrayPosition;
 
+    /**
+     * Get the current Activity where the listViewAdapter is created
+     * @param activity
+     */
     public listViewAdapter(Activity activity) {
         super();
         this.activity = activity;
         this.list = new ArrayList<>();
         holder = new ViewHolder();
-        arrayPosition = new ArrayList();
         arrayTrash = new ArrayList();
         arrayFollow = new ArrayList();
         arrayNoFollow = new ArrayList();
@@ -68,7 +72,7 @@ public class listViewAdapter extends BaseAdapter {
         return 0;
     }
 
-
+    // For a better management of the columns of the list
     private class ViewHolder {
         TextView txtColName; // manga title
         CheckBox txtColFav;  // star Icon
@@ -85,18 +89,19 @@ public class listViewAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_row_library, null);
-//            holder = new ViewHolder();
             holder.txtColName = (TextView) convertView.findViewById(R.id.columnName);
             holder.txtColFav = (CheckBox) convertView.findViewById(R.id.columnFavorite);
             holder.txtColTrash = (CheckBox) convertView.findViewById(R.id.columnTrash);
-            holder.txtColFav.setTag(position);
-            holder.txtColTrash.setTag(position);
+            holder.txtColFav.setTag(position); // give the current position of the associate title manga
+            holder.txtColTrash.setTag(position); // give the current position of the associate title manga
 
+            // No other choices for the moment ...
+            // If user click on the checkbox -> add or remove the position of the selected title in
+            // the arrayTrash.
             holder.txtColTrash.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
                     boolean isChecked = ((CheckBox) arg0).isChecked();
-                    String tag = arg0.getTag().toString();
                     if (isChecked) {
                         // Not already in the array add in
                         if (!arrayTrash.contains(arg0.getTag()))
@@ -109,6 +114,8 @@ public class listViewAdapter extends BaseAdapter {
                 }
             });
 
+            // Same puporse as checkbox. Add or Remove from ArrayNoFollow or ArrayFollow
+            // when user click on the checkbox star
             holder.txtColFav.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
@@ -135,11 +142,11 @@ public class listViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
         HashMap map = list.get(position); // revoir si hashmap pas mieux a la place d'une list
-        holder.txtColName.setText(map.get(FIRST_COLUMN).toString());
+        holder.txtColName.setText(map.get(FIRST_COLUMN).toString()); // put the title of the manga
         holder.txtColName.setSelected(true);
-        holder.txtColFav.setText(map.get(SECOND_COLUMN).toString());
-        holder.txtColTrash.setText(map.get(THIRD_COLUMN).toString());
+        // Look in the db if the manga is not follow  and change the icon of the checkbox in grey star
         String title = map.get(FIRST_COLUMN).toString();
         int idmg = db.getInstance(activity.getApplicationContext()).getManga_id(title);
         if (db.getInstance(activity.getApplicationContext()).isFollow(idmg) == 0) {
@@ -148,7 +155,7 @@ public class listViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-
+    // getter of ArrayList
     public ArrayList getArrayTrashSelected() {
         return arrayTrash;
     }
@@ -161,7 +168,7 @@ public class listViewAdapter extends BaseAdapter {
         return arrayNoFollow;
     }
 
-
+    // Clear all arrayList
     public void clear() {
         this.arrayNoFollow.clear();
         this.arrayFollow.clear();
@@ -169,6 +176,7 @@ public class listViewAdapter extends BaseAdapter {
     }
 
 
+    // Populate the list with the title of manga retrieve from the database
     public void populateList2() {
         HashMap tmp;
 

@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.Scroller;
 
 /**
- * Class use to create a SlideMenu  on the Left of an Activity. Use Like a Layout.
+ * Class uses to create a SlideMenu  on the Left of an Activity. Use Like a Layout.
  * More Information : http://www.devexchanges.info/2016/05/creating-your-own-sliding-menu-like.html
  * Author of the Code : Hồng Thái
  * No Need to go further more on this.
