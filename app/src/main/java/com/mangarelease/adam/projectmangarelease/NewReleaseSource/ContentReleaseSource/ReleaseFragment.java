@@ -7,7 +7,6 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,7 +131,6 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
     private void AddTomeOfFavoriteManga(MangaClass mg, int id) {
         for (int i = 0; i < array.size(); i++) {
             if (array.get(i).getTitleManga().compareTo(mg.getTitle()) == 0) {
-                Log.d("MANGA RELEASE : ", mg.getTitle() + " : " + array.get(i).getNum_vol());
                 TomeClass tome = new TomeClass();
                 tome.setNum_vol(array.get(i).getNum_vol());
                 tome.setDesc(array.get(i).getDesc());

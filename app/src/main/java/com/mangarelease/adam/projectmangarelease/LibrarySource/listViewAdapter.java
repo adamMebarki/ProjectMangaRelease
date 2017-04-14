@@ -6,14 +6,12 @@ package com.mangarelease.adam.projectmangarelease.LibrarySource;
 
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
@@ -100,9 +98,6 @@ public class listViewAdapter extends BaseAdapter {
                     boolean isChecked = ((CheckBox) arg0).isChecked();
                     String tag = arg0.getTag().toString();
                     if (isChecked) {
-                        int duration = Toast.LENGTH_SHORT;
-                        Toast toast = Toast.makeText(arg0.getContext(), tag, duration);
-                        toast.show();
                         // Not already in the array add in
                         if (!arrayTrash.contains(arg0.getTag()))
                             arrayTrash.add(arg0.getTag());
@@ -121,7 +116,6 @@ public class listViewAdapter extends BaseAdapter {
                     if (isChecked) { //
                         // Add manga in follow list if not already && remove in no follow list also
                         if (!arrayFollow.contains(arg0.getTag())) {
-                            Log.d("Tag ", "" + arg0.getTag().toString());
                             arrayFollow.add(arg0.getTag());
                         }
                         if (arrayNoFollow.contains(arg0.getTag())) {

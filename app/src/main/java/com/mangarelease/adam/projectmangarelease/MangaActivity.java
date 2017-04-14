@@ -63,9 +63,6 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         manga.setAuthor_name(author_name);
         manga.setVolumes((ArrayList<TomeClass>) db.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));
         Collections.sort(manga.getVolumes());
-        for(int i=0;i<manga.getVolumes().size();i++){
-            Log.d("Tome : ",manga.getVolumes().get(i).getNum_vol());
-        }
 
         okayBut.setOnClickListener(this);
         editBut.setOnClickListener(this);
@@ -138,14 +135,11 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                 Double price = Double.parseDouble(text_price.getText().toString());
                 manga.setPrice(price);
                 String name = text_author.getText().toString();
-                Log.d("Name Author : ", name);
                 if (!db.getInstance(getApplicationContext()).AuthorExists(name)) {
-                    Log.d("Name not in the database", "Yes");
                     int author_id = (int) db.getInstance(getApplicationContext()).createAuthor(name);
                     manga.setAuthor_id(author_id);
                     db.getInstance(getApplicationContext()).updateManga(manga);
                 } else {
-                    Log.d("Is in the database", "Yes");
                     int id = db.getInstance(getApplicationContext()).getAuthor_id(name);
                     manga.setAuthor_id(id);
                     db.getInstance(getApplicationContext()).updateManga(manga);
@@ -168,13 +162,13 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f));
         row.setPadding(0, 20, 20, 0);
 
-        for (int i = 0; i < manga.getVolumes().size(); i++) {
-            final String pict = manga.getVolumes().get(i).getImage();
-            final String desc = manga.getVolumes().get(i).getDesc();
+        for (int i = 1; i <= manga.getVolumes().size(); i++) {
+            final String pict = manga.getVolumes().get(i-1).getImage();
+            final String desc = manga.getVolumes().get(i-1).getDesc();
             but = new Button(this);
-            but.setId(i);
+            but.setId(i-1);
             but.setGravity(Gravity.CENTER_HORIZONTAL);
-            but.setText(manga.getVolumes().get(i).getNum_vol());
+            but.setText(manga.getVolumes().get(i-1).getNum_vol());
             but.setLayoutParams(p);
             if (db.getInstance(getApplicationContext()).isBuy((String) but.getText())) {
                 but.setTag("GREEN");
@@ -236,7 +230,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                 }
             });
             row.addView(but);
-            if (i % 2 == 0 && i != 0) {
+            if (i % 3 == 0 && i != 0) {
                 table.addView(row);
                 row = new TableRow(this);
                 row.setPadding(0, 20, 20, 0);

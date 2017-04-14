@@ -2,6 +2,7 @@ package com.mangarelease.adam.projectmangarelease;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.ContentReleaseSource.ReleaseFragment;
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource.ExpandableListAdapter;
@@ -53,6 +55,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
     private Fragment fragment;
     private FragmentTransaction ft;
     private FragmentManager fm;
+    private List<TomeClass> tomes;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -84,21 +87,31 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         val.setOnClickListener(this);
 
         // Parsage of the webservice and create an arraylist of elements retrieve.
-        pars = new ParserClass();
-        pars.execute("");
-        while(pars.parsingComplete);
-
-
-
+        Intent i = getIntent();
+        tomes = (List<TomeClass>) i.getSerializableExtra("sampleObject");
+        Log.d("TOMES SIZE", tomes.size() + "");
+      /*  pars = new ParserClass(ReleaseActivity.this);
+        pars.execute("");*/
+        // while(pars.parsingComplete);
 
         //Instantiate the content of Release Activity
         // Replace fragment main when activity start
         fm = ReleaseActivity.this.getSupportFragmentManager();
         ft = fm.beginTransaction();
-        fragment = new ReleaseFragment((ArrayList<TomeClass>) pars.getTomes());
+        if (tomes.isEmpty()) {
+            fragment = new EmptyFragment("Problem of connection, please try again later.");
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            fragment = new ReleaseFragment((ArrayList<TomeClass>) tomes);
+        }
+        //
         ft.add(R.id.release_fragment_content, fragment);
         ft.commit();
-        AddTomeFavorite();
+        //AddTomeFavorite();
     }
 
 
@@ -161,19 +174,17 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         if (v.getId() == val.getId()) {
             this.toggleMenu(v);
             // call the method to filter the releases with th information of filter provide by the user
-            ArrayList<TomeClass> filterAr = filterArray((ArrayList<TomeClass>) pars.getTomes(), listAdapter.stateCategory, listAdapter.stateManga);
+            ArrayList<TomeClass> filterAr = filterArray((ArrayList<TomeClass>) tomes, listAdapter.stateCategory, listAdapter.stateManga);
             if (!filterAr.isEmpty()) {
                 ft = fm.beginTransaction();
                 fragment = new ReleaseFragment(filterAr);
                 ft.replace(R.id.release_fragment_content, fragment);
                 ft.commit();
-                Log.d("Array Filter : ", "**********************************************************************");
             } else { // if no result show an empty fragment
                 ft = fm.beginTransaction();
-                fragment = new EmptyFragment();
+                fragment = new EmptyFragment("Sorry your search returned no results.");
                 ft.replace(R.id.release_fragment_content, fragment);
                 ft.commit();
-                Log.d("Array Filter : ", "**********************************************************************");
             }
         }
 
@@ -198,14 +209,13 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
                 String title = arrayManga.get(i).getTitle();
                 // if manga is followed, add automatically new tomes retrieve from the parsage
                 if (db.getInstance(this).isFollow(arrayManga.get(i).getManga_id()) == 1) {
-                    Log.d("Manga TITLE FOLLOWED :", title);
-                    for (int j = 0; j < pars.getTomes().size(); j++) {
+                    for (int j = 0; j < tomes.size(); j++) {
                         // If title of the manga from the tome is the same, create the tome in the database.
-                        if (pars.getTomes().get(j).getTitleManga().compareTo(title) == 0) {
+                        if (tomes.get(j).getTitleManga().compareTo(title) == 0) {
                             TomeClass tome = new TomeClass();
-                            tome.setNum_vol(pars.getTomes().get(j).getNum_vol());
-                            tome.setDesc(pars.getTomes().get(j).getDesc());
-                            tome.setImage(pars.getTomes().get(j).getImage());
+                            tome.setNum_vol(tomes.get(j).getNum_vol());
+                            tome.setDesc(tomes.get(j).getDesc());
+                            tome.setImage(tomes.get(j).getImage());
                             tome.setManga_id(arrayManga.get(i).getManga_id());
                             db.getInstance(this).createTome(tome, arrayManga.get(i).getManga_id());
                         }
@@ -243,7 +253,6 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         }
         // For the four categories if not checkbox are not checked, delete  tomes of the categories unckeck by the user
         if (tabCategory[0] == 0) { //Shonen checkbox checked == false
-            Log.d("Shonen", "Shonen");
             Iterator<TomeClass> iter = filterArray.iterator();
             while (iter.hasNext()) {
                 TomeClass tome = iter.next();
@@ -311,12 +320,21 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
  */
 class EmptyFragment extends Fragment implements View.OnClickListener {
     private Button retBut;
+    private String sentence = "";
+    private TextView tv;
+
+    public EmptyFragment(String sentence) {
+        this.sentence = sentence;
+    }
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_release_empty, null);
         retBut = (Button) view.findViewById(R.id.returnButRel);
         retBut.setOnClickListener(this); // FavoriteBut instanciation
+        tv = (TextView) view.findViewById(R.id.emptytv);
+        tv.setText(sentence);
         return view;
 
     }

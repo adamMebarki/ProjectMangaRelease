@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.widget.ListView;
 
 import com.mangarelease.adam.projectmangarelease.LibrarySource.listViewAdapter;
@@ -62,7 +61,6 @@ public class ConfirmDialog extends DialogFragment {
 
     public void validateChoice(listViewAdapter lva) {
         ArrayList<MangaClass> array = new ArrayList<>();
-        // array.addAll(db.getInstance(act.getApplicationContext()).getAllMangas());
         array.addAll(lva.arrayManga);
         if (!lva.getArrayFollow().isEmpty()) {  // Manga are now follow
             int position = 0;
@@ -86,7 +84,7 @@ public class ConfirmDialog extends DialogFragment {
                 position = (int) lva.getArrayTrashSelected().get(i);
                 db.getInstance(act.getApplicationContext()).deleteFavorite(array.get(position).getManga_id());
                 db.getInstance(act.getApplicationContext()).deleteManga(array.get(position).getManga_id());
-
+                db.getInstance(act.getApplicationContext()).deleteAllTomes(array.get(position).getManga_id());
             }
 
             lva.arrayManga.clear();
@@ -95,8 +93,6 @@ public class ConfirmDialog extends DialogFragment {
             lva.populateList2();
             lva.notifyDataSetChanged();
             lv.setAdapter(lva);
-            Log.d("List LVA",lva.list.size()+"");
-            Log.d("List LVA",lva.arrayManga.size()+"");
         }
 
     }

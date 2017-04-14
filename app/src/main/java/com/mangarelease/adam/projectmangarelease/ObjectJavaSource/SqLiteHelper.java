@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -425,8 +424,6 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         String selection = KEY_TOME_NUM + " =?" + " AND " + KEY_TOME_MANGA_ID_FK + " = " + manga_id;
         String[] selectionArgs = {num_vol};
         String limit = "1";
-        Log.d("NUM_VOL", num_vol);
-        Log.d("TOME EXISTS", selection + selectionArgs + "manga_id : " + manga_id + " NUM vol : " + num_vol);
         Cursor cursor = db.query(TABLE_TOME, columns, selection, selectionArgs, null, null, null, limit);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();

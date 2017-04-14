@@ -13,7 +13,9 @@
     <string name="title_filter">Filter Search</string>
     <string name="validate_but_rel">Validate</string>
     <string name="title_release">New Releases</string>
-   <string name="return_but_rel">Return</string>
+    <string name="return_but_rel">Return</string>
+    <string name="empty">Sorry your search returned no results.</string>
+
 
     <!-- String Manga Activity -->
     <string name="manga_title">Manga Title</string>

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.FavoriteArray;
+import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.ParserClass;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -41,8 +42,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == releaseBut.getId()) { // open the release activity with the new releases of manga
-            Intent in = new Intent(this, ReleaseActivity.class);
-            startActivity(in);
+
+            ParserClass pars = new ParserClass(MainActivity.this);
+            pars.execute("");
+
         } else if (v.getId() == libraryBut.getId()) { // open the library activity to manage the favorites manga
             Intent in = new Intent(this, LibraryActivity.class);
             startActivity(in);

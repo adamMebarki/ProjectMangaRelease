@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
-import android.widget.Toast;
 
 /**
  * Class use to create a SlideMenu  on the Left of an Activity. Use Like a Layout.
@@ -250,11 +249,6 @@ public class SlidingLayout extends LinearLayout {
                 Point size = new Point();
                 display.getSize(size);
                 int width = size.x;
-                int height = size.y;
-                CharSequence text = "" + prevX + "   " + width;
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(v.getContext(), text, duration);
-                toast.show();
                 if (prevX <= 50 || prevX >= width-90) {
 
                     return true;

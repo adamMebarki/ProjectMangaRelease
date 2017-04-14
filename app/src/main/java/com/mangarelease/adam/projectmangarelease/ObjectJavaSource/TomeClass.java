@@ -6,6 +6,7 @@ package com.mangarelease.adam.projectmangarelease.ObjectJavaSource;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
  * Created by Adam on 19/03/2017.
  */
 
-public class TomeClass implements Comparable<TomeClass> {
+public class TomeClass implements Comparable<TomeClass>,Serializable{
 
     private String titleManga;
     private int manga_id;
