@@ -20,6 +20,8 @@
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
         android:singleLine="true"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
         >
     </TextView>
 

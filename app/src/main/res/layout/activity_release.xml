@@ -2,7 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <!-- This holds our menu -->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,7 +23,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/holo_blue_dark"
                 android:text="@string/title_filter"
-                android:textSize="40dp" />
+                android:textSize="40dp"
+                />
 
             <RelativeLayout
                 android:layout_width="match_parent"

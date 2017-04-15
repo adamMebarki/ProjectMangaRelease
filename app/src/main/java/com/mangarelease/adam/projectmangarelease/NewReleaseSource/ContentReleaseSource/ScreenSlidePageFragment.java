@@ -1,5 +1,6 @@
 package com.mangarelease.adam.projectmangarelease.NewReleaseSource.ContentReleaseSource;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
@@ -43,6 +44,8 @@ public class ScreenSlidePageFragment extends Fragment {
         String html = "<style>img{height: 80%;max-width: 80%;}</style> <html><head></head><body><center><img src=\"" + image + "\"></center></body></html>";
         pictView.loadUrl("about:blank");
         pictView.loadData(html, "text/html", null);
+        pictView.setBackgroundColor(Color.TRANSPARENT);
+        pictView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
         TextView tv_title = (TextView) rootView.findViewById(R.id.title_manga);
         TextView tv_desc = (TextView) rootView.findViewById(R.id.desc_content);
         tv_desc.setMovementMethod(new ScrollingMovementMethod());

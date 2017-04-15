@@ -15,6 +15,25 @@ import java.util.List;
  * Created by Adam on 25/03/2017.
  * Management of the Database of the Application
  * All Activity and Class share the same instance of the db to avoid any errors.
+ *
+ * Inside of the DB :
+ *
+ * Table MANGAS : id, manga_title, manga_price, manga_editor,manga_category, author_id
+ * Table TOMES : id, tome_picture, tome_desc, tome_numero, tome_buy, manga_id
+ * Table AUTHORS : id, author_name
+ * Table FAVORITES : id, manga_id, manga_followed
+ *
+ * Relation between tables :
+ *
+ * An authors can have many mangas.
+ * A manga belongs to only one author.
+ * A manga can have many tomes.
+ * A tome belongs to only one manga.
+ *
+ * A manga in the favorite table can have two status : follow or not follow
+ * follow : New release tomes in the ReleaseActivity will be add automatically for the manga
+ * not follow : New release in the ReleaseActivity will not be add for the manga. Otherwise is still a favorite manga.
+ *
  */
 
 public class SqLiteHelper extends SQLiteOpenHelper {
@@ -577,9 +596,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
 
     /**
-     * Create a favorite row for with the id of a manga and the status followed == 1
-     * @param manga_id   int id of the manga which will be follow
-     * @param followed   int
+     * Create a favorite row  with the id of a manga and the status followed == 1
+     * @param manga_id   int id of the manga which will be follow by the user
+     * @param followed   int  params put in the columns follow  (0 false 1 true)
      * @return
      */
     public long createFavorite(int manga_id, int followed) {
@@ -594,6 +613,12 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         return 0;
     }
 
+    /**
+     *
+     * @param manga_id   int id of the favorite manga
+     * @param followed  int params put in the columns follow (0 false 1 true)
+     * @return
+     */
     public int updateFavorite(int manga_id, int followed) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -603,10 +628,8 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Search if Manga already in the table
-     *
-     * @param manga_id
-     * @return
+     *  Delete a favorite row
+     * @param manga_id  id of the favorite manga deleted
      */
     public void deleteFavorite(long manga_id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -624,6 +647,11 @@ public class SqLiteHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)});
     }
 
+    /**
+     * Find if the manga is in the favorite table or not
+     * @param id  int id of the manga
+     * @return  boolean  true if in the table false otherwise
+     */
     public boolean FavoriteExists(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_FAVORITE_MANGA_ID_FK};
@@ -637,9 +665,9 @@ public class SqLiteHelper extends SQLiteOpenHelper {
 
     }
 
-
-
-    // closing database
+    /**
+     * Close the db when the app is closed
+     */
     public void closeDB() {
         SQLiteDatabase db = this.getReadableDatabase();
         if (db != null && db.isOpen())

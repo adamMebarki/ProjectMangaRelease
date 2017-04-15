@@ -23,7 +23,9 @@
         android:paddingRight="15dip"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"/>
 
     <WebView
         android:id="@+id/picture_content"
@@ -37,9 +39,11 @@
     <TextView
         android:id="@+id/desc_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:maxLines="4"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
         android:scrollbars="vertical" />
 
 

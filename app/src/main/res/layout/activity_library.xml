@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context="com.mangarelease.adam.projectmangarelease.LibraryActivity"
     >
 
@@ -20,6 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
             />
     </RelativeLayout>
 

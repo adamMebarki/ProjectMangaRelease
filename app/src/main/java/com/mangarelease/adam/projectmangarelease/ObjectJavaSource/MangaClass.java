@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * Class contains all of the information of a manga
  * Use to retrieve and add to the db.
  * Use to show information on a manga in a list or a activity
+ * A manga is only created when the user add in the favorite list. Not before.
  */
 
 public class MangaClass implements Parcelable {
