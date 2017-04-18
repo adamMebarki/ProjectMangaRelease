@@ -16,8 +16,8 @@ import static com.mangarelease.adam.projectmangarelease.LibrarySource.Constant.F
 
 public class LibraryActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
-    private Button retBut, valBut;
-    ListView lview;
+    private Button returnLibButton, validateLibButton;
+    ListView listMangaView;
     int impactPoint = 0;
     SqLiteHelper db;
     listViewAdapter adapter;
@@ -26,28 +26,28 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
         // instantiation of element of the layout library
-        retBut = (Button) findViewById(R.id.returnButLib);
-        retBut.setOnClickListener(this);
-        valBut = (Button) findViewById(R.id.validateButLib);
-        valBut.setOnClickListener(this);
-        lview = (ListView) findViewById(R.id.listview);
+        returnLibButton = (Button) findViewById(R.id.returnButLib);
+        returnLibButton.setOnClickListener(this);
+        validateLibButton = (Button) findViewById(R.id.validateButLib);
+        validateLibButton.setOnClickListener(this);
+        listMangaView = (ListView) findViewById(R.id.listview);
         adapter = new listViewAdapter(this);
-        lview.setAdapter(adapter);
-        lview.setOnTouchListener(this);
+        listMangaView.setAdapter(adapter);
+        listMangaView.setOnTouchListener(this);
     }
 
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == retBut.getId()) { // return to the MainActivity
+        if (v.getId() == returnLibButton.getId()) { // return to the MainActivity
             this.finish();
-        } else if (v.getId() == valBut.getId()) { // validate all changement made by the user on the list or return to the Main
+        } else if (v.getId() == validateLibButton.getId()) { // validate all changement made by the user on the list or return to the Main
             // Activity id nothing.
             if (adapter.getArrayTrashSelected().isEmpty() && adapter.getArrayFollow().isEmpty() && adapter.getArrayNoFollow().isEmpty()) {
                 this.finish();
             } else {
                 // If changement  open a Dialog to confirm before apply.
-                ConfirmDialog diag = new ConfirmDialog(this, lview, adapter);
+                ConfirmDialog diag = new ConfirmDialog(this, listMangaView, adapter);
                 diag.show(getSupportFragmentManager(), "Test");
             }
         }
@@ -60,8 +60,8 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
         // Get the X on the list when user touch the screen
         // Determine also if the user click on a title of a manga by using the impactpoint or just slide the list up or down.
         //
-        if (v.getId() == lview.getId()) {
-            int point = lview.pointToPosition((int) event.getX(), (int) event.getY());
+        if (v.getId() == listMangaView.getId()) {
+            int point = listMangaView.pointToPosition((int) event.getX(), (int) event.getY());
             if (point != -1) { // Prevent error by clicking outside the list when the list is short
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
@@ -73,7 +73,7 @@ public class LibraryActivity extends AppCompatActivity implements View.OnClickLi
                         int dif = impactPoint - (int) event.getY();
                         // Open Manga Activity
                         if (dif == 0) { // when user touch and release his finger in the same point == click
-                            point = lview.pointToPosition((int) event.getX(), (int) event.getY());
+                            point = listMangaView.pointToPosition((int) event.getX(), (int) event.getY());
                             Intent in = new Intent(this, MangaActivity.class);
                             in.putExtra("title", (String) adapter.getList().get(point).get(FIRST_COLUMN));
                             startActivity(in);

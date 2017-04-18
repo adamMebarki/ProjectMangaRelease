@@ -21,21 +21,21 @@ import java.util.ArrayList;
 
 public class ConfirmDialog extends DialogFragment {
 
-    private Activity act;
-    private ListView lv;
-    private listViewAdapter lva;
+    private Activity activity;
+    private ListView listView;
+    private listViewAdapter adapter;
     private SqLiteHelper db;
 
     /**
      * Constructor Confirm Dialog
-     * @param act  get the current activity where the instance will be created
-     * @param lv   get the listview of the current Activity
-     * @param lva get the listViewAdapter of the current Activity
+     * @param activity  get the current activity where the instance will be created
+     * @param listView   get the listview of the current Activity
+     * @param adapter get the listViewAdapter of the current Activity
      */
-    public ConfirmDialog(Activity act, ListView lv, listViewAdapter lva) {
-        this.act = act;
-        this.lv = lv;
-        this.lva = lva;
+    public ConfirmDialog(Activity activity, ListView listView, listViewAdapter adapter) {
+        this.activity = activity;
+        this.listView = listView;
+        this.adapter = adapter;
     }
 
     @Override
@@ -45,14 +45,14 @@ public class ConfirmDialog extends DialogFragment {
         builder.setMessage("Do you really want to apply ?")
                 .setPositiveButton("Validate", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        validateChoice(lva);
-                          act.finish();
+                        validateChoice(adapter);
+                          activity.finish();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
-                        initialiseList(lv, lva);
+                        initialiseList(listView, adapter);
 
                     }
                 });
@@ -83,7 +83,7 @@ public class ConfirmDialog extends DialogFragment {
             for (int i = 0; i < lva.getArrayFollow().size(); i++) {
                 position = (int) lva.getArrayFollow().get(i);
                 // update favorite status of a manga in the current position of the list provide by the ArrayList ArrayFollow
-                db.getInstance(act.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 1);
+                db.getInstance(activity.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 1);
             }
         }
 
@@ -92,7 +92,7 @@ public class ConfirmDialog extends DialogFragment {
             for (int i = 0; i < lva.getArrayNoFollow().size(); i++) {
                 position = (int) lva.getArrayNoFollow().get(i);
                 // update favorite status of a manga in the current position of the list provide by the ArrayList ArrayNoFollow
-                db.getInstance(act.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 0);
+                db.getInstance(activity.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 0);
             }
 
         }
@@ -101,17 +101,17 @@ public class ConfirmDialog extends DialogFragment {
             for (int i = 0; i < lva.getArrayTrashSelected().size(); i++) {
                 position = (int) lva.getArrayTrashSelected().get(i);
                 // Delete the manga in the db and all of its tomes
-                db.getInstance(act.getApplicationContext()).deleteFavorite(array.get(position).getManga_id());
-                db.getInstance(act.getApplicationContext()).deleteManga(array.get(position).getManga_id());
-                db.getInstance(act.getApplicationContext()).deleteAllTomes(array.get(position).getManga_id());
+                db.getInstance(activity.getApplicationContext()).deleteFavorite(array.get(position).getManga_id());
+                db.getInstance(activity.getApplicationContext()).deleteManga(array.get(position).getManga_id());
+                db.getInstance(activity.getApplicationContext()).deleteAllTomes(array.get(position).getManga_id());
             }
             // Apply all of the change on the ListView
             lva.arrayManga.clear();
-            lva.arrayManga.addAll(db.getInstance(act.getApplicationContext()).getAllMangas());
+            lva.arrayManga.addAll(db.getInstance(activity.getApplicationContext()).getAllMangas());
             lva.list.clear();
             lva.populateList2();
             lva.notifyDataSetChanged();
-            lv.setAdapter(lva);
+            listView.setAdapter(lva);
         }
 
     }

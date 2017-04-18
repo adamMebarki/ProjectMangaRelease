@@ -14,6 +14,7 @@
         android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal">
 
+        <!-- Text View Title of the Activity -->
         <TextView
             android:id="@+id/libTitle"
             android:text="@string/title_library"
@@ -28,6 +29,7 @@
 
 
 
+    <!-- ListView Contains favorite manga of the user -->
     <ListView
         android:divider="@null"
         android:dividerHeight="0dp"

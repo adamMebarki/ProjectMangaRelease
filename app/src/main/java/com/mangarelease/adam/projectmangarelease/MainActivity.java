@@ -14,7 +14,7 @@ import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private Button quitBut, releaseBut, libraryBut;
+    private Button quitMainButton, releaseMainButton, libraryMainButton;
     private SqLiteHelper db;
 
     @Override
@@ -22,12 +22,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //instanciation of the three buttons of the main Activity
-        quitBut = (Button) findViewById(R.id.quitButMain);
-        releaseBut = (Button) findViewById(R.id.releaseButMain);
-        libraryBut = (Button) findViewById(R.id.libraryButMain);
-        quitBut.setOnClickListener(this);
-        releaseBut.setOnClickListener(this);
-        libraryBut.setOnClickListener(this);
+        quitMainButton = (Button) findViewById(R.id.quitButMain);
+        releaseMainButton = (Button) findViewById(R.id.releaseButMain);
+        libraryMainButton = (Button) findViewById(R.id.libraryButMain);
+        quitMainButton.setOnClickListener(this);
+        releaseMainButton.setOnClickListener(this);
+        libraryMainButton.setOnClickListener(this);
         // Create the instance of the db which will be share in the whole project
         db.getInstance(getApplicationContext());
         // If no create, will create the row for this. It will be the row by default for every new favorite
@@ -39,12 +39,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View v) {
-        if (v.getId() == releaseBut.getId()) { // open the release activity with the new releases of manga
+        if (v.getId() == releaseMainButton.getId()) { // open the release activity with the new releases of manga
             // Start the parsage to recup data in an asynctask class which launch at the end the releaseActivity
             ParserClass pars = new ParserClass(MainActivity.this);
             pars.execute("");
 
-        } else if (v.getId() == libraryBut.getId()) { // open the library activity to manage the favorites manga
+        } else if (v.getId() == libraryMainButton.getId()) { // open the library activity to manage the favorites manga
             Intent in = new Intent(this, LibraryActivity.class);
             startActivity(in);
         } else {

@@ -31,12 +31,12 @@ import java.util.ArrayList;
 
 public class ReleaseFragment extends Fragment implements View.OnClickListener {
 
-    private ViewPager mp;
-    private PagerAdapter mpa;
-    private ArrayList<TomeClass> array;
-    private Button retBut;
+    private ViewPager pagerView;
+    private PagerAdapter pagerAdapter;
+    private ArrayList<TomeClass> tomes;
+    private Button returnRelButton;
     private SqLiteHelper db;
-    private ImageButton favBut;
+    private ImageButton favoriteRelButton;
     private PageListener pageListener;
 
     /**
@@ -44,7 +44,7 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
      * @param ar : ArrayList which contains the list of the new tomes retrieve from the parsage
      */
     public ReleaseFragment(ArrayList<TomeClass> ar) {
-        array = ar;
+        tomes = ar;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -54,28 +54,28 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_release, null);
 
         // Return and Favorite Buttons instanciation
-        retBut = (Button) view.findViewById(R.id.returnButRel);
-        retBut.setOnClickListener(this);
-        favBut = (ImageButton) view.findViewById(R.id.favButRel);
-        favBut.setOnClickListener(this);
-        favBut.setTag(R.drawable.greystar);
+        returnRelButton = (Button) view.findViewById(R.id.returnButRel);
+        returnRelButton.setOnClickListener(this);
+        favoriteRelButton = (ImageButton) view.findViewById(R.id.favButRel);
+        favoriteRelButton.setOnClickListener(this);
+        favoriteRelButton.setTag(R.drawable.greystar);
 
         // Instanciation of the ViewPage which show one tome, one by one when user will slide the screen.
-        mp = (ViewPager) view.findViewById(R.id.pager);
-        mp.setPageTransformer(true, new DepthPageTransformer());
+        pagerView = (ViewPager) view.findViewById(R.id.pager);
+        pagerView.setPageTransformer(true, new DepthPageTransformer());
         // Use of the modify Adapter which use the ScreenSlidePageFragment :
         // The Goal is to use our own Slide and Manage the position of elements like we want
         // More Information : https://developer.android.com/training/animation/screen-slide.html
-        mpa = new ScreenSlidePagerAdapter(this.getChildFragmentManager(), array);
-        mp.setAdapter(mpa);
+        pagerAdapter = new ScreenSlidePagerAdapter(this.getChildFragmentManager(), tomes);
+        pagerView.setAdapter(pagerAdapter);
         // Use of an InfinitePagerAdapter : purpose : loop on the tomes when the user slide. No End and No Begin
         // More Information : https://android-arsenal.com/details/1/1307#!package
-        PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mpa);
-        mp.setAdapter(wrappedAdapter);
+        PagerAdapter wrappedAdapter = new InfinitePagerAdapter(pagerAdapter);
+        pagerView.setAdapter(wrappedAdapter);
         // Use of a PageListener to know which page is the current page for the Favorite Management
-        pageListener = new PageListener(mp, array, favBut, getContext());
+        pageListener = new PageListener(pagerView, tomes, favoriteRelButton, getContext());
         pageListener.onPageSelected(0);
-        mp.addOnPageChangeListener(pageListener);
+        pagerView.addOnPageChangeListener(pageListener);
         return view;
 
     }
@@ -85,17 +85,17 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         // Return to the Menu Screen
-        if (v.getId() == retBut.getId()) {
+        if (v.getId() == returnRelButton.getId()) {
             getActivity().finish();
         }
 
         // Click on the favorite Button :
         // if manga already exist in the db, it changes the status of followed : true or false
         // if manga do not exist in the create new manga and add in the favorite list and followed it automatically
-        if (v.getId() == favBut.getId()) {
+        if (v.getId() == favoriteRelButton.getId()) {
             MangaClass mg = new MangaClass();
-            mg.setTitle(array.get(pageListener.getCurrentPage()).getTitleManga());
-            mg.setCategory(array.get(pageListener.getCurrentPage()).getCategory());
+            mg.setTitle(tomes.get(pageListener.getCurrentPage()).getTitleManga());
+            mg.setCategory(tomes.get(pageListener.getCurrentPage()).getCategory());
             mg.setEditor_name("Kurokawa"); // Because there is only one Publisher for the moment
             int id = (int) db.getInstance(getContext()).createManga(mg);
             // New manga created -> add to the favorite list
@@ -116,11 +116,11 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
             }
             // Change the drawable of the star Grey or Yellow
             if ((Integer) v.getTag() == R.drawable.greystar) {
-                favBut.setBackgroundResource(R.drawable.yellowstar);
-                favBut.setTag(R.drawable.yellowstar);
+                favoriteRelButton.setBackgroundResource(R.drawable.yellowstar);
+                favoriteRelButton.setTag(R.drawable.yellowstar);
             } else {
-                favBut.setBackgroundResource(R.drawable.greystar);
-                favBut.setTag(R.drawable.greystar);
+                favoriteRelButton.setBackgroundResource(R.drawable.greystar);
+                favoriteRelButton.setTag(R.drawable.greystar);
             }
         }
     }
@@ -129,12 +129,12 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
     // Create new Favorite add the current tome chosen and others if in the parseList
     // Same principle as the method AddTomeFavorite() of the ReleaseActivity
     private void AddTomeOfFavoriteManga(MangaClass mg, int id) {
-        for (int i = 0; i < array.size(); i++) {
-            if (array.get(i).getTitleManga().compareTo(mg.getTitle()) == 0) {
+        for (int i = 0; i < tomes.size(); i++) {
+            if (tomes.get(i).getTitleManga().compareTo(mg.getTitle()) == 0) {
                 TomeClass tome = new TomeClass();
-                tome.setNum_vol(array.get(i).getNum_vol());
-                tome.setDesc(array.get(i).getDesc());
-                tome.setImage(array.get(i).getImage());
+                tome.setNum_vol(tomes.get(i).getNum_vol());
+                tome.setDesc(tomes.get(i).getDesc());
+                tome.setImage(tomes.get(i).getImage());
                 tome.setManga_id(mg.getManga_id());
                 db.getInstance(getContext()).createTome(tome, id);
             }
@@ -147,16 +147,16 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
      */
     private static class PageListener extends ViewPager.SimpleOnPageChangeListener {
         private static int currentPage;
-        private static ViewPager mypager;
+        private static ViewPager viewPager;
         private static ArrayList<TomeClass> arrayView;
-        private static ImageButton favb;
+        private static ImageButton favoriteRelButton;
         private SqLiteHelper db;
         private Context context;
 
         public PageListener(ViewPager mp, ArrayList<TomeClass> array, ImageButton favbutton, Context context) {
-            this.mypager = mp;
+            this.viewPager = mp;
             this.arrayView = array;
-            favb = favbutton;
+            favoriteRelButton = favbutton;
             this.context = context;
 
         }
@@ -164,21 +164,21 @@ public class ReleaseFragment extends Fragment implements View.OnClickListener {
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         public void onPageSelected(int position) {
 
-            currentPage = mypager.getCurrentItem();
+            currentPage = viewPager.getCurrentItem();
             int id = db.getInstance(context).getManga_id(arrayView.get(currentPage).getTitleManga());
             int isFollow = db.getInstance(context).isFollow(id);
             if (isFollow == 1) {
-                favb.setBackgroundResource(R.drawable.yellowstar);
-                favb.setTag(R.drawable.yellowstar);
+                favoriteRelButton.setBackgroundResource(R.drawable.yellowstar);
+                favoriteRelButton.setTag(R.drawable.yellowstar);
             } else {
-                favb.setBackgroundResource(R.drawable.greystar);
-                favb.setTag(R.drawable.greystar);
+                favoriteRelButton.setBackgroundResource(R.drawable.greystar);
+                favoriteRelButton.setTag(R.drawable.greystar);
             }
         }
 
 
         public int getCurrentPage() {
-            return mypager.getCurrentItem();
+            return viewPager.getCurrentItem();
         }
 
 
