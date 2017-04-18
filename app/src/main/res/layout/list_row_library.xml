@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for the rows use inside the ListView of the LibraryActivity -->
+
 <LinearLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"

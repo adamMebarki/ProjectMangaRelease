@@ -1,9 +1,10 @@
+<!-- Layout of the Release Activity : filter search Main content of the new releases -->
+
 <com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource.SlidingLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <!-- This holds our menu -->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,8 +24,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/holo_blue_dark"
                 android:text="@string/title_filter"
-                android:textSize="40dp"
-                />
+                android:textSize="40dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -34,9 +34,8 @@
                     android:id="@+id/expandableList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/filterTitle"
                     android:layout_above="@+id/validateButRel"
-                    >
+                    android:layout_below="@+id/filterTitle">
 
                 </ExpandableListView>
 
@@ -66,8 +65,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             android:orientation="horizontal"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
             <ImageView
                 android:id="@+id/menu_icon"
@@ -79,30 +78,23 @@
 
             <TextView
                 android:id="@+id/titleRelease"
-                android:text="@string/title_release"
                 style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:gravity="center"
+                android:text="@string/title_release"
                 android:textColor="@android:color/white" />
 
         </android.support.v7.widget.Toolbar>
-
-
-
 
 
         <!-- Fragments container layout -->
         <FrameLayout
             android:id="@+id/release_fragment_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </FrameLayout>
-
-
-
+            android:layout_height="match_parent"></FrameLayout>
 
 
     </LinearLayout>

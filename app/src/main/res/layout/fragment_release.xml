@@ -6,7 +6,7 @@
     android:background="@drawable/background"
     >
 
-    <!-- Content of the release activity -> Swipe content and button favorite plus return -->
+    <!-- Content of the release activity -> ViewPager and button favorite plus return -->
 
 
     <com.antonyt.infiniteviewpager.InfiniteViewPager xmlns:android="http://schemas.android.com/apk/res/android"
