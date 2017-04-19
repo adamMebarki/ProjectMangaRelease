@@ -98,13 +98,14 @@
 
     <ImageButton
         android:id="@+id/editBut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="42dp"
+        android:background="@drawable/button_shape_state_hc_right"
+        app:srcCompat="@drawable/edit_icon"
         android:layout_below="@+id/mangaTitle"
-        android:layout_marginTop="27dp"
-        app:srcCompat="@drawable/edit_icon" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
     <Button
@@ -112,6 +113,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:textColor="#FF6600"
+        android:background="@drawable/button_shape_state"
+        android:textSize="30dp"
         android:text="@string/manga_ok" />
 
 
@@ -123,6 +127,8 @@
         android:layout_alignStart="@+id/editBut"
         android:layout_alignTop="@+id/mangaOk"
         android:text="@string/manga_cancel"
+        android:textColor="#FF6600"
+        android:background="@drawable/button_shape_state"
         android:visibility="invisible" />
 
     <Button
@@ -133,6 +139,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/Editlrl2"
         android:text="@string/manga_validate"
+        android:textColor="#FF6600"
+        android:background="@drawable/button_shape_state"
         android:visibility="invisible" />
 
 </RelativeLayout>
