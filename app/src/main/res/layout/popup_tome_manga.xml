@@ -41,6 +41,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.30"
             android:text="dismiss"
+            android:textColor="#FF6600"
+            android:background="@drawable/button_shape_state"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 

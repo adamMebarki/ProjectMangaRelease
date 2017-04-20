@@ -9,16 +9,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.ContentReleaseSource.ReleaseFragment;
+import com.mangarelease.adam.projectmangarelease.NewReleaseSource.ContentReleaseSource.EmptyFragment;
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource.ExpandableListAdapter;
 import com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource.SlidingLayout;
 import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.MangaClass;
@@ -311,31 +309,3 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
  * Class use when where is no result of the filter make by the user. An empty page will show to replace the
  * releasefragment and avoid any error.
  */
-class EmptyFragment extends Fragment implements View.OnClickListener {
-    private Button returnRelButton;
-    private String sentence = "";
-    private TextView textEmpty;
-
-    public EmptyFragment(String sentence) {
-        this.sentence = sentence;
-    }
-
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_release_empty, null);
-        returnRelButton = (Button) view.findViewById(R.id.returnButRel);
-        returnRelButton.setOnClickListener(this); // FavoriteBut instanciation
-        textEmpty = (TextView) view.findViewById(R.id.emptytv);
-        textEmpty.setText(sentence);
-        return view;
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == returnRelButton.getId()) {
-            getActivity().finish();
-        }
-    }
-}
