@@ -1,12 +1,13 @@
 package com.mangarelease.adam.projectmangarelease.LibrarySource;
 
-/**
- * Created by Adam on 11/03/2017.
- * Contains the title of Favorite Mangas, Checkbox to delete or update the following.
- * Manage the interaction on the list
+/*
+  Created by Adam on 11/03/2017.
+  Contains the title of Favorite Mangas, Checkbox to delete or update the following.
+  Manage the interaction on the list
  */
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +50,7 @@ public class listViewAdapter extends BaseAdapter {
         arrayFollow = new ArrayList();
         arrayNoFollow = new ArrayList();
         arrayManga = new ArrayList<>();
-        arrayManga.addAll(db.getInstance(activity.getApplicationContext()).getAllMangas());
+        arrayManga.addAll(SqLiteHelper.getInstance(activity.getApplicationContext()).getAllMangas());
         populateList2();
     }
 
@@ -79,6 +80,7 @@ public class listViewAdapter extends BaseAdapter {
         CheckBox txtColTrash; // trash icon
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
@@ -148,8 +150,8 @@ public class listViewAdapter extends BaseAdapter {
         holder.txtColName.setSelected(true);
         // Look in the db if the manga is not follow  and change the icon of the checkbox in grey star
         String title = map.get(FIRST_COLUMN).toString();
-        int idmg = db.getInstance(activity.getApplicationContext()).getManga_id(title);
-        if (db.getInstance(activity.getApplicationContext()).isFollow(idmg) == 0) {
+        int idmg = SqLiteHelper.getInstance(activity.getApplicationContext()).getManga_id(title);
+        if (SqLiteHelper.getInstance(activity.getApplicationContext()).isFollow(idmg) == 0) {
             holder.txtColFav.setChecked(false);
         }
         return convertView;

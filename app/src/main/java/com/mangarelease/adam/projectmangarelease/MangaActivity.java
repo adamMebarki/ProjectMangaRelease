@@ -1,5 +1,6 @@
 package com.mangarelease.adam.projectmangarelease;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -36,10 +37,11 @@ import java.util.Collections;
 
 public class MangaActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button okayButton, cancelButton, validateButton, dismissButton;
+    private Button okayButton;
+    private Button cancelButton;
+    private Button validateButton;
     private EditText etext_author, etext_category, etext_price, etext_editor;
     private ImageButton editButton;
-    private TextView title;
     private MangaClass manga;
     private SqLiteHelper db;
     private TableLayout table;
@@ -52,7 +54,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_manga);
 
         // instantiation of the element from the layout
-        title = (TextView) findViewById(R.id.mangaTitle);
+        TextView title = (TextView) findViewById(R.id.mangaTitle);
         okayButton = (Button) findViewById(R.id.mangaOk);
         editButton = (ImageButton) findViewById(R.id.editBut);
         cancelButton = (Button) findViewById(R.id.cancelEditBut);
@@ -61,10 +63,10 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         // get the title of the manga and get the manga from the db and the author
         String text = getIntent().getStringExtra("title");
         title.setText(text);
-        manga = db.getInstance(getApplicationContext()).getManga(text);
-        String author_name = db.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
+        manga = SqLiteHelper.getInstance(getApplicationContext()).getManga(text);
+        String author_name = SqLiteHelper.getInstance(getApplicationContext()).getAuthor(manga.getAuthor_id());
         manga.setAuthor_name(author_name);
-        manga.setVolumes((ArrayList<TomeClass>) db.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));
+        manga.setVolumes((ArrayList<TomeClass>) SqLiteHelper.getInstance(getApplicationContext()).getAllVolumes(manga.getManga_id()));
         Collections.sort(manga.getVolumes()); // sort the tomes of the manga
 
         okayButton.setOnClickListener(this);
@@ -84,14 +86,16 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
         etext_category.setText(manga.getCategory());
         etext_price = (EditText) findViewById(R.id.text_price);
         etext_price.setEnabled(false);
-        etext_price.setText("" + manga.getPrice());
+        etext_price.setText( String.valueOf(manga.getPrice()));
 
 
         // Table Layout part
        /* Find Tablelayout defined in main.xml */
         table = (TableLayout) findViewById(R.id.tableVolume);
         table.setGravity(Gravity.CENTER_HORIZONTAL);
-        createTable();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            createTable();
+        }
 
 
     }
@@ -133,7 +137,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                 etext_author.setText(manga.getAuthor_name());
                 etext_editor.setText(manga.getEditor_name());
                 etext_category.setText(manga.getCategory());
-                etext_price.setText(manga.getPrice()+"");
+                etext_price.setText(String.valueOf(manga.getPrice()));
                 break;
             case R.id.valEditBut:
                 // Valid modification made on the editText save in the db and return in the normal state of the MangaActivity
@@ -153,14 +157,14 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                 manga.setPrice(price);
                 String name = etext_author.getText().toString();
                 // If the author add not in the db create it and update the author_id of the manga
-                if (!db.getInstance(getApplicationContext()).AuthorExists(name)) {
-                    int author_id = (int) db.getInstance(getApplicationContext()).createAuthor(name);
+                if (!SqLiteHelper.getInstance(getApplicationContext()).AuthorExists(name)) {
+                    int author_id = (int) SqLiteHelper.getInstance(getApplicationContext()).createAuthor(name);
                     manga.setAuthor_id(author_id);
-                    db.getInstance(getApplicationContext()).updateManga(manga);
+                    SqLiteHelper.getInstance(getApplicationContext()).updateManga(manga);
                 } else {
-                    int id = db.getInstance(getApplicationContext()).getAuthor_id(name);
+                    int id = SqLiteHelper.getInstance(getApplicationContext()).getAuthor_id(name);
                     manga.setAuthor_id(id);
-                    db.getInstance(getApplicationContext()).updateManga(manga);
+                    SqLiteHelper.getInstance(getApplicationContext()).updateManga(manga);
                 }
                 break;
             default:
@@ -170,17 +174,18 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void createTable() {
+    private void createTable() {
         Button caseButton;
         // three buttons per row
         android.widget.TableRow.LayoutParams p = new android.widget.TableRow.LayoutParams();
-        p.rightMargin = dpToPixel(10, getApplicationContext()); // right-margin = 10dp
+        p.rightMargin = dpToPixel(getApplicationContext()); // right-margin = 10dp
         TableRow row = new TableRow(this);
         row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f));
         row.setPadding(0, 20, 20, 0);
+        row.setGravity(Gravity.CENTER_HORIZONTAL);
         // Better to start at 1 for calculation
         for (int i = 1; i <= manga.getVolumes().size(); i++) {
-            // get the informatio to display on the screen picture and resume
+            // get the information to display on the screen picture and resume
             final String pict = manga.getVolumes().get(i - 1).getImage();
             final String desc = manga.getVolumes().get(i - 1).getDesc();
             // create the button related to the current tome
@@ -190,7 +195,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
             caseButton.setText(manga.getVolumes().get(i - 1).getNum_vol());
             caseButton.setLayoutParams(p);
             // Check if the tome was bought by the user and change the color in consequence
-            if (db.getInstance(getApplicationContext()).isBuy((String) caseButton.getText())) {
+            if (SqLiteHelper.getInstance(getApplicationContext()).isBuy((String) caseButton.getText())) {
                 caseButton.setTag("GREEN");
                 caseButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_clicked));
             } else {
@@ -207,11 +212,11 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                     if (v.getTag().toString().compareTo("GREEN") != 0) {
                         v.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_clicked));
                         v.setTag("GREEN");
-                        db.getInstance(getApplicationContext()).updateBuy(1, (String) b.getText());
+                        SqLiteHelper.getInstance(getApplicationContext()).updateBuy(1, (String) b.getText());
                     } else {
                         v.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_normal));
                         v.setTag("GREY");
-                        db.getInstance(getApplicationContext()).updateBuy(0, (String) b.getText());
+                        SqLiteHelper.getInstance(getApplicationContext()).updateBuy(0, (String) b.getText());
                     }
                 }
             });
@@ -225,7 +230,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                     LayoutInflater layoutInflater
                             = (LayoutInflater) getBaseContext()
                             .getSystemService(LAYOUT_INFLATER_SERVICE);
-                    View popupView = layoutInflater.inflate(R.layout.popup_tome_manga, null);
+                    @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.popup_tome_manga, null);
 
                     createPopupWindow(popupView,desc,pict);
                     return true;
@@ -237,6 +242,7 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
                 row = new TableRow(this);
                 row.setPadding(0, 20, 20, 0);
                 row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f));
+                row.setGravity(Gravity.CENTER_HORIZONTAL);
             }
         }
         table.addView(row);
@@ -245,12 +251,12 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    public void createPopupWindow(View popupView,String desc,String pict) {
+    private void createPopupWindow(View popupView, String desc, String pict) {
          popupTome = new PopupWindow(
                 popupView,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        dismissButton = (Button) popupView.findViewById(R.id.dismiss);
+        Button dismissButton = (Button) popupView.findViewById(R.id.dismiss);
         WebView web = (WebView) popupView.findViewById(R.id.popup_wb);
         TextView desc_tome = (TextView) popupView.findViewById(R.id.desc_content_popup);
         desc_tome.setText(desc);
@@ -268,14 +274,13 @@ public class MangaActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * Useful method to position the buttons on the tableLayout like I want. No need to go further more.
-     * @param dp int
      * @param context Context get current context
      * @return
      */
-    public static int dpToPixel(int dp, Context context) {
+    private static int dpToPixel(Context context) {
         if (scale == null)
             scale = context.getResources().getDisplayMetrics().density;
-        return (int) ((float) dp * scale);
+        return (int) ((float) 10 * scale);
     }
 
 }

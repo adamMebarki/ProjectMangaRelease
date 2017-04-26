@@ -1,6 +1,7 @@
 package com.mangarelease.adam.projectmangarelease.NewReleaseSource.FilterSearchSource;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -91,6 +92,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
     // Modify Method
+    @SuppressLint("InflateParams")
     @Override
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView,
@@ -125,6 +127,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     // Modify Method
+    @SuppressLint("InflateParams")
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
@@ -151,6 +154,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
      * @param convertView
      * @return the checkbox selected for futher use
      */
+    @SuppressLint("InflateParams")
     public CheckBox getCheckBox(int groupPosition, int childPosition, View convertView) {
         final String childText = (String) getChild(groupPosition, childPosition);
         if (convertView == null) {

@@ -23,7 +23,6 @@ public class ScreenSlidePageFragment extends Fragment {
     private String desc;
     private String title;
     private String num;
-    private WebView pictView;
 
     public ScreenSlidePageFragment(TomeClass currentTome) {
         this.image = currentTome.getImage();
@@ -33,6 +32,10 @@ public class ScreenSlidePageFragment extends Fragment {
         this.num = currentTome.getNum_vol();
     }
 
+    public ScreenSlidePageFragment(){
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class ScreenSlidePageFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_release_slide_page, container, false);
 
-        pictView = (WebView) rootView.findViewById(R.id.picture_content);
+        WebView pictView = (WebView) rootView.findViewById(R.id.picture_content);
         String html = "<style>img{height: 80%;max-width: 80%;}</style> <html><head></head><body><center><img src=\"" + image + "\"></center></body></html>";
         pictView.loadUrl("about:blank");
         pictView.loadData(html, "text/html", null);

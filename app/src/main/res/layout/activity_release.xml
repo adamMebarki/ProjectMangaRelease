@@ -24,7 +24,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/holo_blue_dark"
                 android:text="@string/title_filter"
-                android:textSize="40dp" />
+                android:textSize="40sp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -35,7 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_above="@+id/validateButRel"
-                    android:layout_below="@+id/filterTitle">
+                   >
 
                 </ExpandableListView>
 
@@ -94,7 +94,9 @@
         <FrameLayout
             android:id="@+id/release_fragment_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></FrameLayout>
+            android:layout_height="match_parent">
+
+        </FrameLayout>
 
 
     </LinearLayout>

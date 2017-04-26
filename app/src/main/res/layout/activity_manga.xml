@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Layout of the Manga Activity : description of a manga and list of its tomes -->
 
+<!-- Layout of the Manga Activity : description of a manga and list of its tomes -->
+<!-- I used the singleLine because at the moment there is nothing to replace correctly this option. It
+  is depreciated but we can use again until Android will find a good solution-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -16,8 +18,15 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="28dp"
-        android:textSize="35dp"
+        android:textSize="35sp"
         android:text="@string/manga_title"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:singleLine="true"
         android:textAlignment="center"
         android:textColor="@color/colorBlack"
         android:textStyle="bold"/>
@@ -27,6 +36,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/Editlrl1"
         android:layout_below="@+id/editBut"
+        android:foregroundGravity="center_horizontal"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
@@ -34,11 +44,12 @@
 
         <TableLayout
             android:id="@+id/tableVolume"
+            android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:stretchColumns="*"
+            android:shrinkColumns="*"
             android:isScrollContainer="true">
 
         </TableLayout>
@@ -58,6 +69,7 @@
             android:singleLine="true"
             android:textColor="@color/colorBlack"
             android:textStyle="bold"
+            android:hint="@string/manga_hint_author"
             />
 
         <EditText
@@ -67,7 +79,8 @@
             android:layout_weight="0.5"
             android:singleLine="true"
             android:textColor="@color/colorBlack"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:hint="@string/manga_hint_category"/>
     </LinearLayout>
 
     <LinearLayout
@@ -83,7 +96,8 @@
             android:layout_weight="0.5"
             android:singleLine="true"
             android:textColor="@color/colorBlack"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:hint="@string/manga_hint_editor"/>
 
         <EditText
             android:id="@+id/text_price"
@@ -92,12 +106,14 @@
             android:layout_weight="0.3"
             android:singleLine="true"
             android:textColor="@color/colorBlack"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:hint="@string/manga_hint_price"/>
     </LinearLayout>
 
 
     <ImageButton
         android:id="@+id/editBut"
+        android:contentDescription="@string/manga_edition"
         android:layout_width="60dp"
         android:layout_height="50dp"
         android:layout_marginTop="42dp"
@@ -115,7 +131,7 @@
         android:layout_alignParentBottom="true"
         android:textColor="#FF6600"
         android:background="@drawable/button_shape_state"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:text="@string/manga_ok" />
 
 

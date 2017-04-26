@@ -27,7 +27,7 @@ public class SlidingLayout extends LinearLayout {
     private static final int QUERY_INTERVAL = 16;
 
     // Sliding width
-    int sldingLayoutWidth;
+    private int sldingLayoutWidth;
 
     // Sliding menu
     private View menu;
@@ -39,7 +39,6 @@ public class SlidingLayout extends LinearLayout {
     // This should be updated correctly later in onMeasure
     private static int menuRightMargin = 0;
 
-    WindowManager wm;
     private Display display;
 
     // The state of menu
@@ -67,18 +66,18 @@ public class SlidingLayout extends LinearLayout {
     private Handler menuHandler = new Handler();
 
     // Previous touch position
-    int prevX = 0;
+    private int prevX = 0;
 
     // Is user dragging the content
-    boolean isDragging = false;
+    private boolean isDragging = false;
 
     // Used to facilitate ACTION_UP
-    int lastDiffX = 0;
+    private int lastDiffX = 0;
 
     public SlidingLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         display = wm.getDefaultDisplay();
     }
 
@@ -145,8 +144,12 @@ public class SlidingLayout extends LinearLayout {
         content.layout(left + contentXOffset, top, right + contentXOffset, bottom);
     }
 
-    // Custom methods for SlidingLayout
-    // Used to show/hide menu accordingly
+    /**
+     * Call the toggleMenu method of the slidingLayout variable to close or open the filter Search Menu y clicked on the
+     * Menu Button on the top left of the screen.
+     *
+     *
+     */
     public void toggleMenu() {
         // Do nothing if sliding is in progress
         if (currentMenuState == MenuState.HIDING || currentMenuState == MenuState.SHOWING)
@@ -214,7 +217,6 @@ public class SlidingLayout extends LinearLayout {
                 menu.setVisibility(View.GONE);
                 break;
             default:
-                return;
         }
     }
 
@@ -233,7 +235,7 @@ public class SlidingLayout extends LinearLayout {
     }
 
     // Handle touch event on content View
-    public boolean onContentTouch(View v, MotionEvent event) {
+    private boolean onContentTouch(View v, MotionEvent event) {
         // Do nothing if sliding is in progress
         if (currentMenuState == MenuState.HIDING || currentMenuState == MenuState.SHOWING)
             return false;
@@ -249,11 +251,7 @@ public class SlidingLayout extends LinearLayout {
                 Point size = new Point();
                 display.getSize(size);
                 int width = size.x;
-                if (prevX <= 50 || prevX >= width-90) {
-
-                    return true;
-                } else
-                    return false;
+                return prevX <= 50 || prevX >= width - 90;
 
             case MotionEvent.ACTION_MOVE:
                 // Set menu to Visible when user start dragging the content View

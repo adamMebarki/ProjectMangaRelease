@@ -10,7 +10,7 @@ import android.view.View;
  * See the url : https://developer.android.com/training/animation/screen-slide.html
  */
 
-public class DepthPageTransformer implements ViewPager.PageTransformer {
+class DepthPageTransformer implements ViewPager.PageTransformer {
     private static final float MIN_SCALE = 0.75f;
 
     public void transformPage(View view, float position) {

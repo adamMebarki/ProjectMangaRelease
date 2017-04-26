@@ -78,10 +78,9 @@ public class TomeClass implements Comparable<TomeClass>,Serializable{
      * @param desc  String description retrieve from the xml.
      * @return  String url of the picture of the tome
      */
-    protected String retrievePicture(String desc) {
+    private String retrievePicture(String desc) {
         String urlpict = desc.substring(desc.indexOf("https"));
-        String img = urlpict.substring(0, urlpict.indexOf("\" alt"));
-        return img;
+        return urlpict.substring(0, urlpict.indexOf("\" alt"));
     }
 
 

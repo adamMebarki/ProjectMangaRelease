@@ -10,9 +10,8 @@
         android:id="@+id/columnName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="First"
         android:layout_weight="2.5"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:ellipsize="marquee"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -34,7 +33,6 @@
         android:id="@+id/columnFavorite"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:text="Second"
         android:layout_weight="0.5">
     </CheckBox>
 
@@ -43,7 +41,6 @@
         android:id="@+id/columnTrash"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:text="Third"
         android:layout_weight="0.5">
     </CheckBox>
 

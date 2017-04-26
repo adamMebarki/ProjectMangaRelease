@@ -34,7 +34,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
 
     private HashMap<String, String> tabUrl;
     private List<TomeClass> tomesReleases = new ArrayList<>();
-    public volatile boolean parsingComplete = true;
+    private volatile boolean parsingComplete = true;
     private transient ProgressDialog progressDialog;
     private transient Context context;
 
@@ -92,7 +92,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
      * @throws IOException
      * @throws XmlPullParserException
      */
-    public void fetchHTML() throws IOException, XmlPullParserException {
+    private void fetchHTML() throws IOException, XmlPullParserException {
 
         for (Map.Entry<String, String> entry : tabUrl.entrySet()) {
             String cle = entry.getKey();
@@ -127,7 +127,7 @@ public class ParserClass extends AsyncTask<String, Void, Void> implements Serial
      * @param myParser
      * @param category name of the category of tomes retrieved (Shonen,Seinen,...)
      */
-    public void parseXML(XmlPullParser myParser, String category) {
+    private void parseXML(XmlPullParser myParser, String category) {
 
         int event;
         String title = "";

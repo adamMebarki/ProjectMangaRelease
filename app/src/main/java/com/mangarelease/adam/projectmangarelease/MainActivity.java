@@ -14,7 +14,8 @@ import com.mangarelease.adam.projectmangarelease.ObjectJavaSource.SqLiteHelper;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private Button quitMainButton, releaseMainButton, libraryMainButton;
+    private Button releaseMainButton;
+    private Button libraryMainButton;
     private SqLiteHelper db;
 
     @Override
@@ -22,17 +23,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //instanciation of the three buttons of the main Activity
-        quitMainButton = (Button) findViewById(R.id.quitButMain);
+        Button quitMainButton = (Button) findViewById(R.id.quitButMain);
         releaseMainButton = (Button) findViewById(R.id.releaseButMain);
         libraryMainButton = (Button) findViewById(R.id.libraryButMain);
         quitMainButton.setOnClickListener(this);
         releaseMainButton.setOnClickListener(this);
         libraryMainButton.setOnClickListener(this);
         // Create the instance of the db which will be share in the whole project
-        db.getInstance(getApplicationContext());
+        SqLiteHelper.getInstance(getApplicationContext());
         // If no create, will create the row for this. It will be the row by default for every new favorite
         // if the author is not specified.
-        db.getInstance(getApplicationContext()).createAuthor("No Specify");
+        SqLiteHelper.getInstance(getApplicationContext()).createAuthor("No Specify");
 
     }
 

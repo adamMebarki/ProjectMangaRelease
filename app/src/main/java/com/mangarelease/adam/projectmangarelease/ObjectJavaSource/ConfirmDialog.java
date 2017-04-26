@@ -37,6 +37,9 @@ public class ConfirmDialog extends DialogFragment {
         this.listView = listView;
         this.adapter = adapter;
     }
+    public ConfirmDialog(){
+
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -65,7 +68,7 @@ public class ConfirmDialog extends DialogFragment {
      * @param lv listview from the libraryActivity to initialise again
      * @param lva listviewAdapter from the LibraryActivity to initialise again
      */
-    public void initialiseList(ListView lv, listViewAdapter lva) {
+    private void initialiseList(ListView lv, listViewAdapter lva) {
         lva.clear();
         lv.setAdapter(lva);
     }
@@ -75,7 +78,7 @@ public class ConfirmDialog extends DialogFragment {
      * @param lva ListViewAdapter from the LibraryActivity which contains the informations of the changements
      *            made by the user on his list. Take the three ArrayList related to the checkbox.
      */
-    public void validateChoice(listViewAdapter lva) {
+    private void validateChoice(listViewAdapter lva) {
         ArrayList<MangaClass> array = new ArrayList<>();
         array.addAll(lva.arrayManga); // contains all of the manga display on the listView
         if (!lva.getArrayFollow().isEmpty()) {  // Manga are now follow
@@ -83,7 +86,7 @@ public class ConfirmDialog extends DialogFragment {
             for (int i = 0; i < lva.getArrayFollow().size(); i++) {
                 position = (int) lva.getArrayFollow().get(i);
                 // update favorite status of a manga in the current position of the list provide by the ArrayList ArrayFollow
-                db.getInstance(activity.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 1);
+                SqLiteHelper.getInstance(activity.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 1);
             }
         }
 
@@ -92,7 +95,7 @@ public class ConfirmDialog extends DialogFragment {
             for (int i = 0; i < lva.getArrayNoFollow().size(); i++) {
                 position = (int) lva.getArrayNoFollow().get(i);
                 // update favorite status of a manga in the current position of the list provide by the ArrayList ArrayNoFollow
-                db.getInstance(activity.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 0);
+                SqLiteHelper.getInstance(activity.getApplicationContext()).updateFavorite(array.get(position).getManga_id(), 0);
             }
 
         }
@@ -101,13 +104,13 @@ public class ConfirmDialog extends DialogFragment {
             for (int i = 0; i < lva.getArrayTrashSelected().size(); i++) {
                 position = (int) lva.getArrayTrashSelected().get(i);
                 // Delete the manga in the db and all of its tomes
-                db.getInstance(activity.getApplicationContext()).deleteFavorite(array.get(position).getManga_id());
-                db.getInstance(activity.getApplicationContext()).deleteManga(array.get(position).getManga_id());
-                db.getInstance(activity.getApplicationContext()).deleteAllTomes(array.get(position).getManga_id());
+                SqLiteHelper.getInstance(activity.getApplicationContext()).deleteFavorite(array.get(position).getManga_id());
+                SqLiteHelper.getInstance(activity.getApplicationContext()).deleteManga(array.get(position).getManga_id());
+                SqLiteHelper.getInstance(activity.getApplicationContext()).deleteAllTomes(array.get(position).getManga_id());
             }
             // Apply all of the change on the ListView
             lva.arrayManga.clear();
-            lva.arrayManga.addAll(db.getInstance(activity.getApplicationContext()).getAllMangas());
+            lva.arrayManga.addAll(SqLiteHelper.getInstance(activity.getApplicationContext()).getAllMangas());
             lva.list.clear();
             lva.populateList2();
             lva.notifyDataSetChanged();

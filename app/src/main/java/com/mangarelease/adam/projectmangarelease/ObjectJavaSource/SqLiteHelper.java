@@ -1,5 +1,6 @@
 package com.mangarelease.adam.projectmangarelease.ObjectJavaSource;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -178,8 +179,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             values.put(KEY_MANGA_EDITOR, manga.getEditor_name());
             values.put(KEY_MANGA_CATEGORY, manga.getCategory());
             values.put(KEY_MANGA_AUTHOR_ID_FK, manga.getAuthor_id());
-            long manga_id = db.insert(TABLE_MANGA, null, values);
-            return manga_id;
+            return db.insert(TABLE_MANGA, null, values);
         }
         return 0;
     }
@@ -196,7 +196,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         String selection = KEY_MANGA_TITLE + " =?";
         String[] selectionArgs = {titleManga,};
         String limit = "1";
-        Cursor c = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
+        @SuppressLint("Recycle") Cursor c = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
 
         MangaClass mg = null;
         if (c.getCount() > 0) {
@@ -208,8 +208,10 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             mg.setEditor_name(c.getString(c.getColumnIndex(KEY_MANGA_EDITOR)));
             mg.setCategory(c.getString(c.getColumnIndex(KEY_MANGA_CATEGORY)));
             mg.setAuthor_id(c.getInt(c.getColumnIndex(KEY_MANGA_AUTHOR_ID_FK)));
+            c.close();
             return mg;
         } else {
+            c.close();
             return mg;
         }
     }
@@ -227,13 +229,15 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         String selection = KEY_MANGA_TITLE + " =?";
         String[] selectionArgs = {titleManga,};
         String limit = "1";
-        Cursor c = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
+        @SuppressLint("Recycle") Cursor c = db.query(TABLE_MANGA, columns, selection, selectionArgs, null, null, null, limit);
 
         if (c.getCount() > 0) {
             c.moveToNext();
             manga_id = c.getInt(c.getColumnIndex(KEY_ID));
+            c.close();
             return manga_id;
         }
+        c.close();
         return manga_id;
     }
 
@@ -246,7 +250,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         List<MangaClass> mangas = new ArrayList<MangaClass>();
         String selectQuery = "SELECT * FROM " + TABLE_MANGA;
-        Cursor c = db.rawQuery(selectQuery, null);
+        @SuppressLint("Recycle") Cursor c = db.rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
             do {
                 MangaClass mg = new MangaClass();
@@ -260,6 +264,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
 
         }
+        c.close();
         return mangas;
     }
 
@@ -301,7 +306,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
      * @param titleManga String
      * @return boolean
      */
-    public boolean MangaExists(String titleManga) {
+    private boolean MangaExists(String titleManga) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_MANGA_TITLE};
         String selection = KEY_MANGA_TITLE + " LIKE?";
@@ -356,8 +361,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             values.put(KEY_TOME_NUM, tome.getNum_vol());
             values.put(KEY_TOME_MANGA_ID_FK, manga_id);
             values.put(KEY_TOME_BUY, 0);
-            long tome_id = db.insert(TABLE_TOME, null, values);
-            return tome_id;
+            return db.insert(TABLE_TOME, null, values);
         }
         return 0;
     }
@@ -376,7 +380,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
                 " WHERE " + KEY_TOME_NUM + " LIKE " + "'" + num_vol + "'" + " AND " +
                 KEY_TOME_MANGA_ID_FK + " = " + manga_id + ";";
         TomeClass tm = null;
-        Cursor c = db.rawQuery(selectQuery, null);
+        @SuppressLint("Recycle") Cursor c = db.rawQuery(selectQuery, null);
         if (c.getCount() > 0) {
             c.moveToNext();
             tm = new TomeClass();
@@ -385,8 +389,10 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             tm.setDesc(c.getString(c.getColumnIndex(KEY_TOME_DESC)));
             tm.setNum_vol(c.getString(c.getColumnIndex(KEY_TOME_NUM)));
             tm.setIsBuy(c.getInt(c.getColumnIndex(KEY_TOME_BUY)));
+            c.close();
             return tm;
         } else {
+            c.close();
             return tm;
         }
     }
@@ -402,7 +408,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         List<TomeClass> tomes = new ArrayList<TomeClass>();
         String selectQuery = "SELECT * FROM " + TABLE_TOME +
                 " WHERE " + KEY_TOME_MANGA_ID_FK + " = " + manga_id + ";";
-        Cursor c = db.rawQuery(selectQuery, null);
+        @SuppressLint("Recycle") Cursor c = db.rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
             do {
                 TomeClass tm = new TomeClass();
@@ -415,6 +421,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
 
         }
+        c.close();
         return tomes;
     }
 
@@ -463,7 +470,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
      * @param manga_id  int id of the manga in which the tome belongs to it.
      * @return
      */
-    public boolean TomeExists(String num_vol, int manga_id) {
+    private boolean TomeExists(String num_vol, int manga_id) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_TOME_NUM};
         String selection = KEY_TOME_NUM + " =?" + " AND " + KEY_TOME_MANGA_ID_FK + " = " + manga_id;
@@ -491,10 +498,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
             c.moveToNext();
             int buy = c.getInt(c.getColumnIndex(KEY_TOME_BUY));
             c.close();
-            if (buy == 1)
-                return true;
-            else
-                return false;
+            return buy == 1;
         }
         return false;
     }
@@ -526,8 +530,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         if (!this.AuthorExists(author_name)) {
             ContentValues values = new ContentValues();
             values.put(KEY_AUTHOR_NAME, author_name);
-            long author_id = db.insert(TABLE_AUTHOR, null, values);
-            return author_id;
+            return db.insert(TABLE_AUTHOR, null, values);
         }
         return 0;
     }
@@ -567,13 +570,15 @@ public class SqLiteHelper extends SQLiteOpenHelper {
         String selection = KEY_AUTHOR_NAME + " =?";
         String[] selectionArgs = {name,};
         String limit = "1";
-        Cursor c = db.query(TABLE_AUTHOR, columns, selection, selectionArgs, null, null, null, limit);
+        @SuppressLint("Recycle") Cursor c = db.query(TABLE_AUTHOR, columns, selection, selectionArgs, null, null, null, limit);
 
         if (c.getCount() > 0) {
             c.moveToNext();
             author_id = c.getInt(c.getColumnIndex(KEY_ID));
+            c.close();
             return author_id;
         }
+        c.close();
         return author_id;
     }
 
@@ -598,17 +603,15 @@ public class SqLiteHelper extends SQLiteOpenHelper {
     /**
      * Create a favorite row  with the id of a manga and the status followed == 1
      * @param manga_id   int id of the manga which will be follow by the user
-     * @param followed   int  params put in the columns follow  (0 false 1 true)
      * @return
      */
-    public long createFavorite(int manga_id, int followed) {
+    public long createFavorite(int manga_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         if (!this.FavoriteExists(manga_id)) {
             ContentValues values = new ContentValues();
             values.put(KEY_FAVORITE_MANGA_ID_FK, manga_id);
-            values.put(KEY_FAVORITE_FOLLOWED, followed);
-            long fav_id = db.insert(TABLE_FAVORITE, null, values);
-            return fav_id;
+            values.put(KEY_FAVORITE_FOLLOWED, 1);
+            return db.insert(TABLE_FAVORITE, null, values);
         }
         return 0;
     }
@@ -652,7 +655,7 @@ public class SqLiteHelper extends SQLiteOpenHelper {
      * @param id  int id of the manga
      * @return  boolean  true if in the table false otherwise
      */
-    public boolean FavoriteExists(int id) {
+    private boolean FavoriteExists(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {KEY_FAVORITE_MANGA_ID_FK};
         String selection = KEY_FAVORITE_MANGA_ID_FK + " =?";

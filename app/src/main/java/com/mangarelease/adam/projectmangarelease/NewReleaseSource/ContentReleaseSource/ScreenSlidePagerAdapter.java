@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * No need to go further more on the class
  */
 
-public class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
+class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
     private ArrayList<TomeClass> arraySSPA;
 
     public ScreenSlidePagerAdapter(FragmentManager fm, ArrayList<TomeClass> arrayList) {

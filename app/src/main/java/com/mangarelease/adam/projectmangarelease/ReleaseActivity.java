@@ -31,19 +31,17 @@ import java.util.List;
 public class ReleaseActivity extends AppCompatActivity implements View.OnClickListener, ExpandableListView.OnChildClickListener {
     // The SlidingLayout which will hold both the sliding menu and our main content
     // Main content will holds our Fragment respectively
-    SlidingLayout slidingLayout;
+    private SlidingLayout slidingLayout;
 
 
-    /* Declaration Menu Filter Search variables */
-    private Toolbar toolbar;
     private ImageView menuRelButton; // Menu button on the top left of the screen
     private Button validateFilterButton; // button to validate the filter.
 
     /* Declaration Expendable component **/
     private ExpandableListAdapter listAdapter;
     private ExpandableListView expandableListFilter;
-    List<String> listDataHeader; //
-    HashMap<String, List<String>> listDataChild;
+    private List<String> listDataHeader; //
+    private HashMap<String, List<String>> listDataChild;
 
 
     /* Declaration of the content of the releasePart the parser and the fragment which will content the webview*/
@@ -63,7 +61,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
         // instanciation of variables of Menu Filter Search
         slidingLayout = (SlidingLayout) findViewById(R.id.sliding_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // get the listview
         expandableListFilter = (ExpandableListView) findViewById(R.id.expandableList);
@@ -133,15 +131,6 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    /**
-     * Call the toggleMenu method of the slidingLayout variable to close or open the filter Search Menu y clicked on the
-     * Menu Button on the top left of the screen.
-     *
-     * @param v
-     */
-    public void toggleMenu(View v) {
-        slidingLayout.toggleMenu();
-    }
 
     @Override
     public void onBackPressed() {
@@ -163,7 +152,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         // If user click on the validate button of the filter Search Menu close it and
         // Run the filter algorithm and replace the fragment by a new with the filter result
         if (v.getId() == validateFilterButton.getId()) {
-            this.toggleMenu(v);
+            slidingLayout.toggleMenu();
             // call the method to filter the releases with th information of filter provide by the user
             ArrayList<TomeClass> filterAr = FilterSearch((ArrayList<TomeClass>) tomes, listAdapter.stateCategory, listAdapter.stateManga);
             if (!filterAr.isEmpty()) {
@@ -180,26 +169,25 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         if (v.getId() == menuRelButton.getId()) {
-            this.toggleMenu(v);
+            //this.toggleMenu(v);
+            slidingLayout.toggleMenu();
         }
-
-
     }
 
     /**
      * When a manga is already in the database and it is checked as a favorite/follow, it will add automatically
      * the new tomes of this favorite manga in the database. Just after the parsage.
      */
-    public void AddTomeFavorite() {
+    private void AddTomeFavorite() {
         SqLiteHelper db = null;
         ArrayList<MangaClass> arrayManga = new ArrayList<>();
-        arrayManga.addAll(db.getInstance(this).getAllMangas());
+        arrayManga.addAll(SqLiteHelper.getInstance(this).getAllMangas());
         if (!arrayManga.isEmpty()) {
             // See all of manga if they are favorite/follow or not
             for (int i = 0; i < arrayManga.size(); i++) {
                 String title = arrayManga.get(i).getTitle();
                 // if manga is followed, add automatically new tomes retrieve from the parsage
-                if (db.getInstance(this).isFollow(arrayManga.get(i).getManga_id()) == 1) {
+                if (SqLiteHelper.getInstance(this).isFollow(arrayManga.get(i).getManga_id()) == 1) {
                     for (int j = 0; j < tomes.size(); j++) {
                         // If title of the manga from the tome is the same, create the tome in the database.
                         if (tomes.get(j).getTitleManga().compareTo(title) == 0) {
@@ -208,7 +196,7 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
                             tome.setDesc(tomes.get(j).getDesc());
                             tome.setImage(tomes.get(j).getImage());
                             tome.setManga_id(arrayManga.get(i).getManga_id());
-                            db.getInstance(this).createTome(tome, arrayManga.get(i).getManga_id());
+                            SqLiteHelper.getInstance(this).createTome(tome, arrayManga.get(i).getManga_id());
                         }
 
                     }
@@ -224,20 +212,20 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
      * @param tabManga    Contains informations about which checkbox is checked or not for the Manga section
      * @return ArrayList<TomeClass> return the new filter ArrayList which will be use by the fragment
      */
-    public ArrayList<TomeClass> FilterSearch(ArrayList<TomeClass> tomes, int[] tabCategory, int[] tabManga) {
+    private ArrayList<TomeClass> FilterSearch(ArrayList<TomeClass> tomes, int[] tabCategory, int[] tabManga) {
         ArrayList<TomeClass> arrayFilter = new ArrayList<>();
         SqLiteHelper db = null;
 
         if (tabManga[0] == 1) {  // checkbox favorites checked == true
             for (int i = 0; i < tomes.size(); i++) {
-                if (db.getInstance(getApplicationContext()).getManga_id(tomes.get(i).getTitleManga()) != 0) { // Manga is favorite
+                if (SqLiteHelper.getInstance(getApplicationContext()).getManga_id(tomes.get(i).getTitleManga()) != 0) { // Manga is favorite
                     arrayFilter.add(tomes.get(i));
                 }
             }
         }
         if (tabManga[1] == 1) { // checkbox Others checked == true
             for (int i = 0; i < tomes.size(); i++) {
-                if (db.getInstance(getApplicationContext()).getManga_id(tomes.get(i).getTitleManga()) == 0) { // Manga is not favorite
+                if (SqLiteHelper.getInstance(getApplicationContext()).getManga_id(tomes.get(i).getTitleManga()) == 0) { // Manga is not favorite
                     arrayFilter.add(tomes.get(i));
                 }
             }
@@ -304,8 +292,3 @@ public class ReleaseActivity extends AppCompatActivity implements View.OnClickLi
         return true;
     }
 }
-
-/**
- * Class use when where is no result of the filter make by the user. An empty page will show to replace the
- * releasefragment and avoid any error.
- */

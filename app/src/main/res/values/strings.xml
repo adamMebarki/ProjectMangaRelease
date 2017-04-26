@@ -5,21 +5,29 @@
     <string name="release_but_main">New Releases</string>
     <string name="library_but_main">My Library</string>
     <string name="quit_but_main">Quit</string>
+
     <!-- String Library Activity  -->
     <string name="validate_but_lib">Validate</string>
     <string name="return_but_lib">Return</string>
     <string name="title_library">My Library</string>
+
     <!-- String Release Activity  -->
     <string name="title_filter">Filter Search</string>
     <string name="validate_but_rel">Validate</string>
     <string name="title_release">New Releases</string>
     <string name="return_but_rel">Return</string>
     <string name="empty">Sorry your search returned no results.</string>
-
+    <string name="release_favorite">Add to favorite or enable/disable following</string>
 
     <!-- String Manga Activity -->
     <string name="manga_title">Manga Title</string>
     <string name="manga_ok">OK</string>
     <string name="manga_validate">Validate</string>
     <string name="manga_cancel">Cancel</string>
+    <string name="manga_edition">Open Edition Mode</string>
+    <string name="manga_dismiss">Dismiss</string>
+    <string name="manga_hint_author">Author Name</string>
+    <string name="manga_hint_editor">Publisher Name</string>
+    <string name="manga_hint_category">Manga Category</string>
+    <string name="manga_hint_price">Price</string>
 </resources>

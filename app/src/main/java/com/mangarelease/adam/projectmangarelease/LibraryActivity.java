@@ -17,10 +17,10 @@ import static com.mangarelease.adam.projectmangarelease.LibrarySource.Constant.F
 public class LibraryActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
     private Button returnLibButton, validateLibButton;
-    ListView listMangaView;
-    int impactPoint = 0;
+    private ListView listMangaView;
+    private int impactPoint = 0;
     SqLiteHelper db;
-    listViewAdapter adapter;
+    private listViewAdapter adapter;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
